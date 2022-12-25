@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>2022年总结</title>
+    <link href="/2022/12/26/2022%E5%B9%B4%E6%80%BB%E7%BB%93/"/>
+    <url>/2022/12/26/2022%E5%B9%B4%E6%80%BB%E7%BB%93/</url>
+    
+    <content type="html"><![CDATA[<h2 id="2022年12月，博客建立起来，那便做个简单的年终总结吧"><a href="#2022年12月，博客建立起来，那便做个简单的年终总结吧" class="headerlink" title="2022年12月，博客建立起来，那便做个简单的年终总结吧"></a>2022年12月，博客建立起来，那便做个简单的年终总结吧</h2><h3 id="一、2022年我做过了什么"><a href="#一、2022年我做过了什么" class="headerlink" title="一、2022年我做过了什么"></a>一、2022年我做过了什么</h3><p>年初，考研二战失败。根本没有复习导致考试结果很差，也是意料之中的。</p><p>1月10日左右入职科大国创，随着在公司所在时间越久越能感受到公司作为日资企业带来的上下级关系压力以及作为外包公司带来的高强度的工作压力。这份压力从春节之后越发明显，也把我安排到了公司的一个java开发的项目组，但是工作强度超过了我的预期，也和我预想的工作状态存在一定的差距。</p><p>4月10日转正，尝试提薪失败，遂产生离开的想法。在转正前坐我右边工位的老哥也提出了离职并离开该公司</p><p>5月10日左右，在经过五一假期一整个假期的思考后决定提离职，结算工资准备走人。并于17号将项目交接完毕离职。</p><p>6月初，在boss直聘上联系到了现在就职的对称轴公司，并一直工作到现在。现在主要做机器学习。</p><p>6月搬家到距离公司较近的位置，与老黄二人合租。之前约的是四人合租最后变成了两个人的合租，一整套房子一年租下来花了2w多。</p><p>在新公司参与了五个项目，火焰识别最后用在了去宿州实验的消防机器人上，水滴的检测最后部署到了工厂流水线，合作的物品识别还在磕磕绊绊的做着，至于这个月突发的项目，全是泪阿…都怪自己一上头提议使用开发板，这下给自己上难题喽！</p><!-- 6、7月在办公室学习并训练火焰识别，7月下旬接触一个水滴检测的项目，8月前往宿州参与火焰消防机器人实验半个月，9月开始正式进行水滴检测项目，几乎每天都在往设备现场跑。11月公司搬到新地点，桃花智谷产业园，并利用政策蹭办公室租金。公司提供宿舍，故转移到公司对面的中央悦府。11月水滴项目收尾优化，开始参与易游项目。12月突发项目电焊平台开发，最近加班略多，作息也很混乱。 --><p>成功组到了心仪的电脑，游戏体验也更好了，虽然游戏时间明显少了很多。原神和方舟也终于可以逐渐扩大抽卡的范围，方舟的限定池不再需要担心歪卡，也不需要特别刻意攒限定池。原神也把很多想抽的都抽到手了。</p><h3 id="二、2022年我学到了什么"><a href="#二、2022年我学到了什么" class="headerlink" title="二、2022年我学到了什么"></a>二、2022年我学到了什么</h3><p>首先，天上没有白掉的馅饼。在科大国创工作的4个月时间里，工作强度高工资却只有6500，想想当初hr急于找人的状态就应该能想到这个公司处于什么状态。</p><p>其次，要知道什么该说什么不该说（虽然知道但是很多时候我还做不到），有些东西知道了也不能说出来，自己知道就好。</p><p>技术上的知识也稍微精进了一些，但是总体肯定是不尽如人意的。</p><h3 id="三、2022年我没做到什么"><a href="#三、2022年我没做到什么" class="headerlink" title="三、2022年我没做到什么"></a>三、2022年我没做到什么</h3><p>驾照没考，工资还是比理想值低了一些，处理事情的方式方法特别是与人交流存在很大的问题。</p><p>想要看的很多书都没有看</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>生活-感悟</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>年终总结</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="/2022/12/26/hello-world/"/>
+    <url>/2022/12/26/hello-world/</url>
+    
+    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo new <span class="hljs-string">&quot;My New Post&quot;</span><br></code></pre></td></tr></table></figure><figure class="highlight python"><figcaption><span>title</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">python3 -verison<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo server<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo generate<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo deploy<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>新博客的建立</title>
+    <link href="/2022/12/25/%E6%9C%94%E5%8D%97%E5%AF%92/"/>
+    <url>/2022/12/25/%E6%9C%94%E5%8D%97%E5%AF%92/</url>
+    
+    <content type="html"><![CDATA[<p>距离上次更新文章已经过去了两年有余，原因无他，抑郁症等多方面的压力导致我更新博客的兴趣大大降低。虽然后来有尝试购买服务器以及域名，为的是一来可以搭建更加个人化更加自由的博客，二来还可以学习一下web技术，但是最后还是又不了了之。</p><p>随着工作以及生活的发展，我的抑郁症已经基本治愈，外加上表达欲的逐渐旺盛，我终于在今天写下了新的博文。</p><h2 id="Hexo框架"><a href="#Hexo框架" class="headerlink" title="Hexo框架"></a>Hexo框架</h2><p>上一个博客使用的是jekyll框架，也就是GitHub Page服务推荐的框架。同时直接clone了<a href="http://huangxuan.me/">黄玄</a>大佬的主题，但是由于鄙人能力不足，改来改去总是不满意，达不到自己想要的效果,还留下了一堆bug。后来发现身边的同学和大佬都在使用Hexo，故而这次动了心思，决定使用Hexo搭建一个新的博客，也算是人生新阶段的开始。</p><h3 id="安装与配置"><a href="#安装与配置" class="headerlink" title="安装与配置"></a>安装与配置</h3><p>安装是非常简单的，首先按照<a href="https://hexo.io/zh-cn/docs/">Hexo官方文档</a>的要求安装好一个博客环境，根据<a href="https://hexo.io/zh-cn/docs/one-command-deployment">Hexo一键部署</a>将博客与GitHub的仓库链接，最后找到喜欢的主题安装。本人选用的主题是<a href="https://fluid-dev.github.io/hexo-fluid-docs/start/">Hexo Fluid</a>，按照文档配置好。</p><h2 id="域名选购"><a href="#域名选购" class="headerlink" title="域名选购"></a>域名选购</h2><p>因为备案过于繁琐且要求甚多，准备的时间也非常之长，再加上这次我的博客不打算使用国内的服务器，所以干脆直接通过国外注册商购买域名。经过简单的了解后我选择从<a href="https://www.namesilo.com/">Namesilo</a>购买，这个top尾缀的域名一年不到2美元，属实便宜。</p><p>Namesilo的DNS配置也异常的方便，在Domain Manage的界面选择右侧的小篮球，页面下面有GitHub模板可以直接使用。DNS解析需要约两个小时，在GitHub页面配置的时候静候一会就好。</p><h2 id="开写"><a href="#开写" class="headerlink" title="开写!"></a>开写!</h2><p>输入<code>hexo s</code>启动实时渲染,<code>hexo d</code>直接部署到GitHub上。输入网址，成功！</p><h3 id="谷歌流量分析"><a href="#谷歌流量分析" class="headerlink" title="谷歌流量分析"></a>谷歌流量分析</h3><p>到<code>_config.fluid.yml</code>里面，找到<code>web_analytics</code>，在<code>google</code>和<code>gtag</code>两个参数中<strong>都填上ID</strong>，注意是全字母的那个。</p><h3 id="评论区开启"><a href="#评论区开启" class="headerlink" title="评论区开启"></a>评论区开启</h3><p>我选用的giscus，毕竟发布在discussion要比issue优雅的多。<br>首先在<code>_config.fluid.yml</code>里面将<code>comments</code>功能打开并设置为<code>giscus</code>，接着打开<a href="https://giscus.app/zh-CN">giscus</a>，按照操作一步一步做完后将最后生成的js代码中的前四个参数写进<code>_config.fluid.yml</code>里<code>giscus</code>的配置中即可，配置文件除了前四行都不需要动，我推测懒加载功能应该已经写到别的地方了，这个地方不需要额外加参数进行配置。</p><h2 id="一点小小的感想"><a href="#一点小小的感想" class="headerlink" title="一点小小的感想"></a>一点小小的感想</h2><p>当初头疼不已的评论功能如今通过GitHub自带的discussion就可以实现，过去的四年里真的错过了好多有意思的东西阿…现在才回想起来当初被这个评论功能的实现搞得焦头烂额，最后无奈放弃。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术-博客</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Hexo</tag>
+      
+      <tag>GitHub</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  
+</search>
