@@ -96,6 +96,13 @@ torchvision = { url = "https://pypi.jetson-ai-lab.io/jp6/cu126/+f/d5b/caaf709f11
 onnxruntime-gpu = { url = "https://pypi.jetson-ai-lab.io/jp6/cu126/+f/4eb/e6a8902dc7708/onnxruntime_gpu-1.23.0-cp310-cp310-linux_aarch64.whl" }
 ```
 
+注意:
+
+1. numpy需要限制在2.0版本以下是为了配合onnx
+2. torch、torchvision和onnxruntime-gpu三个包都是通过专门为jetson编译的whl包网站[pypi.jetson-ai-lab.io](https://pypi.jetson-ai-lab.io/jp6/cu126)找到的下载链接，网上存在部分资料将这个地址给到了[pypi.jetson-ai-lab.dev](https://pypi.jetson-ai-lab.dev)，注意这个网站已经被弃用，根据[nvidia开发者论坛的帖子](https://forums.developer.nvidia.com/t/pypi-jetson-ai-lab-dev-is-down-again/338358/43)，2025年8月13日官方账号发布声明`.dev`域名失效并转移至`.io`。此外英伟达[还有一个链接](https://developer.download.nvidia.cn/compute/redist/jp/v61/pytorch/)可以下载wheel包，但是我根据路径名称倾向于认为其更大概率是基于jetpack6.1版本的wheel包，所以在此不做推荐，仅供参考。
+3. 如果出现了其他问题，请尽量多通过[英伟达官方开发者论坛](https://forums.developer.nvidia.com/)进行检索，相比搜索引擎，这个论坛上的答案相对来说更靠谱一些
+4. 请警惕GPT等LLM模型提供的答案，在采纳前尽量多自行在开发者论坛上搜索一下，特别是让你安装或卸载一些软件时，这些模型瞎编乱造胡乱缝合的能力有一手的。
+
 更新完成后运行
 
 ```bash
@@ -142,6 +149,8 @@ success = model.export(format="engine", device=0, int8=True)
 ```
 
 模型自动下载并导出到路径下`yolo11n.engine`
+
+注意，代码中的bus.jpg为yolo官方文档中最常用的示例图片[`https://ultralytics.com/images/bus.jpg`(点击下载)](https://ultralytics.com/images/bus.jpg)
 
 ### 量化模型推理
 
