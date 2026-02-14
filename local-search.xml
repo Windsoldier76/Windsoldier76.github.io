@@ -4,6 +4,168 @@
   
   
   <entry>
+    <title>Jetson端侧模型部署与TensorRT加速</title>
+    <link href="/2026/02/14/Jetson%E7%AB%AF%E4%BE%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2%E4%B8%8ETensorRT%E5%8A%A0%E9%80%9F/"/>
+    <url>/2026/02/14/Jetson%E7%AB%AF%E4%BE%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2%E4%B8%8ETensorRT%E5%8A%A0%E9%80%9F/</url>
+    
+    <content type="html"><![CDATA[<h2 id="基于Jetson-Orin-Nano-Super-8G版本的YOLO模型端侧部署与TensorRT加速推理"><a href="#基于Jetson-Orin-Nano-Super-8G版本的YOLO模型端侧部署与TensorRT加速推理" class="headerlink" title="基于Jetson Orin Nano Super 8G版本的YOLO模型端侧部署与TensorRT加速推理"></a>基于Jetson Orin Nano Super 8G版本的YOLO模型端侧部署与TensorRT加速推理</h2><h3 id="环境部署"><a href="#环境部署" class="headerlink" title="环境部署"></a>环境部署</h3><p>首先通过Nvidia SDK Manager配置好基本的JetPack环境，本设备安装JetPack<code>6.2.1</code>，cuda<code>12.6.68</code>，cudnn<code>9.3.0.75</code>，TensorRT<code>10.3.0.30</code></p><p>注意，如果前面安装正常但是jtop显示未检测到jetpack，那很有可能是版本问题导致的显示异常，只需要修改jtop的显示页面即可，jetpack通常应当是正确安装上了的。</p><h4 id="安装uv包"><a href="#安装uv包" class="headerlink" title="安装uv包"></a>安装uv包</h4><p>运行如下命令</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -LsSf https://astral.sh/uv/install.sh | sh<br></code></pre></td></tr></table></figure><p>下载脚本并执行，跳出来的选择直接回车，默认就是yes。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> 项目目录<br>uv init<br>uv python install 3.10<br>uv python pin 3.10<br>uv venv --python 3.10 --system-site-packages<br></code></pre></td></tr></table></figure><h4 id="配置tensorRT"><a href="#配置tensorRT" class="headerlink" title="配置tensorRT"></a>配置tensorRT</h4><p>首先在基础环境中运行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">python3 - &lt;&lt; <span class="hljs-string">&#x27;EOF&#x27;</span> <br>import tensorrt as trt <br><span class="hljs-built_in">print</span>(trt.__version__) <br>EOF<br></code></pre></td></tr></table></figure><p>如果输出结果是<code>10.3.0</code>或其他版本号，则说明TensorRT已正确安装进系统环境中，上一步中的<code>uv venv --python 3.10 --system-site-packages</code>，通过<code>--system-site-packages</code>将系统环境继承到了虚拟环境中，此时运行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">uv run python3 - &lt;&lt; <span class="hljs-string">&#x27;EOF&#x27;</span> <br>import tensorrt as trt <br><span class="hljs-built_in">print</span>(trt.__version__) <br>EOF<br></code></pre></td></tr></table></figure><p>应当输出结果与上一个命令一致。</p><h4 id="安装torch与ultralytics"><a href="#安装torch与ultralytics" class="headerlink" title="安装torch与ultralytics"></a>安装torch与ultralytics</h4><p>打开<code>pyproject.toml</code>，编写如下内容</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs text">[project]<br>name = &quot;项目名称&quot;<br>version = &quot;0.1.0&quot;<br>description = &quot;Add your description here&quot;<br>readme = &quot;README.md&quot;<br>requires-python = &quot;&gt;=3.10, &lt;3.11&quot;<br>dependencies = [<br>    &quot;numpy&lt;2&quot;,<br>    &quot;opencv-python&quot;,<br>    &quot;ultralytics&quot;,<br>    &quot;pytubefix&gt;=10.3.6&quot;,<br>    &quot;onnx&gt;=1.12.0, &lt;2.0.0&quot;,<br>    &quot;onnxslim&gt;=0.1.71&quot;<br>]<br><br>[project.optional-dependencies]<br>jetson = [<br>    &quot;torch&quot;,<br>    &quot;torchvision&quot;,<br>    &quot;onnxruntime-gpu&quot;,<br>]<br><br># ================================<br># uv：为特定包指定安装来源<br># ================================<br><br>[tool.uv.sources]<br>torch = &#123; url = &quot;https://pypi.jetson-ai-lab.io/jp6/cu126/+f/02f/de421eabbf626/torch-2.9.1-cp310-cp310-linux_aarch64.whl&quot; &#125;<br>torchvision = &#123; url = &quot;https://pypi.jetson-ai-lab.io/jp6/cu126/+f/d5b/caaf709f11750/torchvision-0.24.1-cp310-cp310-linux_aarch64.whl&quot; &#125;<br><br>onnxruntime-gpu = &#123; url = &quot;https://pypi.jetson-ai-lab.io/jp6/cu126/+f/4eb/e6a8902dc7708/onnxruntime_gpu-1.23.0-cp310-cp310-linux_aarch64.whl&quot; &#125;<br></code></pre></td></tr></table></figure><p>注意:</p><ol><li>numpy需要限制在2.0版本以下是为了配合onnx</li><li>torch、torchvision和onnxruntime-gpu三个包都是通过专门为jetson编译的whl包网站<a href="https://pypi.jetson-ai-lab.io/jp6/cu126">pypi.jetson-ai-lab.io</a>找到的下载链接，网上存在部分资料将这个地址给到了<a href="https://pypi.jetson-ai-lab.dev/">pypi.jetson-ai-lab.dev</a>，注意这个网站已经被弃用，根据<a href="https://forums.developer.nvidia.com/t/pypi-jetson-ai-lab-dev-is-down-again/338358/43">nvidia开发者论坛的帖子</a>，2025年8月13日官方账号发布声明<code>.dev</code>域名失效并转移至<code>.io</code>。此外英伟达<a href="https://developer.download.nvidia.cn/compute/redist/jp/v61/pytorch/">还有一个链接</a>可以下载wheel包，但是我根据路径名称倾向于认为其更大概率是基于jetpack6.1版本的wheel包，所以在此不做推荐，仅供参考。</li><li>如果出现了其他问题，请尽量多通过<a href="https://forums.developer.nvidia.com/">英伟达官方开发者论坛</a>进行检索，相比搜索引擎，这个论坛上的答案相对来说更靠谱一些</li><li>请警惕GPT等LLM模型提供的答案，在采纳前尽量多自行在开发者论坛上搜索一下，特别是让你安装或卸载一些软件时，这些模型瞎编乱造胡乱缝合的能力有一手的。</li></ol><p>更新完成后运行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">uv <span class="hljs-built_in">sync</span> --extra jetson<br></code></pre></td></tr></table></figure><p>环境更新完成后运行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">uv run python - &lt;&lt; <span class="hljs-string">&#x27;EOF&#x27;</span><br>import tensorrt as trt<br>import torch<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;TensorRT:&quot;</span>, trt.__version__)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Torch:&quot;</span>, torch.__version__)<br>EOF<br></code></pre></td></tr></table></figure><p>输出结果应当为</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">TensorRT: 10.3.0<br>Torch: 2.9.1<br></code></pre></td></tr></table></figure><h3 id="模型量化导出"><a href="#模型量化导出" class="headerlink" title="模型量化导出"></a>模型量化导出</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> ultralytics <span class="hljs-keyword">import</span> YOLO<br><br><span class="hljs-comment"># Load a pretrained YOLO model (recommended for training)</span><br>model = YOLO(<span class="hljs-string">&quot;yolo11n.pt&quot;</span>)<br><br><span class="hljs-comment"># Train the model using the &#x27;coco8.yaml&#x27; dataset for 3 epochs</span><br><span class="hljs-comment">#results = model.train(data=&quot;coco8.yaml&quot;, epochs=3)</span><br><br><span class="hljs-comment"># Evaluate the model&#x27;s performance on the validation set</span><br><span class="hljs-comment">#results = model.val()</span><br><br><span class="hljs-comment"># Perform object detection on an image using the model</span><br>results = model(<span class="hljs-string">&quot;./bus.jpg&quot;</span>, save=<span class="hljs-literal">True</span>)<br><br><span class="hljs-comment"># Export the model to ONNX format</span><br>success = model.export(<span class="hljs-built_in">format</span>=<span class="hljs-string">&quot;engine&quot;</span>, device=<span class="hljs-number">0</span>, int8=<span class="hljs-literal">True</span>)<br></code></pre></td></tr></table></figure><p>模型自动下载并导出到路径下<code>yolo11n.engine</code></p><p>注意，代码中的bus.jpg为yolo官方文档中最常用的示例图片<a href="https://ultralytics.com/images/bus.jpg"><code>https://ultralytics.com/images/bus.jpg</code>(点击下载)</a></p><h3 id="量化模型推理"><a href="#量化模型推理" class="headerlink" title="量化模型推理"></a>量化模型推理</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> ultralytics <span class="hljs-keyword">import</span> YOLO<br><br><span class="hljs-comment"># Load a pretrained YOLO model (recommended for training)</span><br>model = YOLO(<span class="hljs-string">&quot;yolo11n.engine&quot;</span>)<br><br><span class="hljs-comment"># Train the model using the &#x27;coco8.yaml&#x27; dataset for 3 epochs</span><br><span class="hljs-comment">#results = model.train(data=&quot;coco8.yaml&quot;, epochs=3)</span><br><br><span class="hljs-comment"># Evaluate the model&#x27;s performance on the validation set</span><br><span class="hljs-comment">#results = model.val()</span><br><br><span class="hljs-comment"># Perform object detection on an image using the model</span><br>results = model(<span class="hljs-string">&quot;./bus.jpg&quot;</span>, save=<span class="hljs-literal">True</span>)<br><br><span class="hljs-comment"># Export the model to ONNX format</span><br><span class="hljs-comment"># success = model.export(format=&quot;engine&quot;, device=0, int8=True)</span><br></code></pre></td></tr></table></figure><h3 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h3><p>来一张经典的公交车图片进行测试</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 使用TensorRT量化加速</span><br>image 1/1 ./bus.jpg: 640x640 4 persons, 1 bus, 10.9ms<br>Speed: 8.3ms preprocess, 10.9ms inference, 19.2ms postprocess per image at shape (1, 3, 640, 640)<br><br><span class="hljs-comment"># 基础的pt模型</span><br>image 1/1 ./bus.jpg: 640x480 4 persons, 1 bus, 162.1ms<br>Speed: 5.9ms preprocess, 162.1ms inference, 24.4ms postprocess per image at shape (1, 3, 640, 480)<br></code></pre></td></tr></table></figure><p>性能差距确实夸张，下一步开始尝试将工作中的几个模型转换到tensorrt上试试。</p><p>有机会了再试试基于openvino的，这样就可以跑在英特尔的cpu上了。</p><p>至于国产的龙芯和晟腾还是再往后稍稍吧，一步一步来。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术-记录</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>ubuntu</tag>
+      
+      <tag>踩坑</tag>
+      
+      <tag>Nvidia</tag>
+      
+      <tag>jetson</tag>
+      
+      <tag>TensorRT</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>2026年初计划</title>
+    <link href="/2026/02/09/2026%E5%B9%B4%E5%88%9D%E8%AE%A1%E5%88%92/"/>
+    <url>/2026/02/09/2026%E5%B9%B4%E5%88%9D%E8%AE%A1%E5%88%92/</url>
+    
+    <content type="html"><![CDATA[<h2 id="又到了立flag的时间"><a href="#又到了立flag的时间" class="headerlink" title="又到了立flag的时间"></a>又到了立flag的时间</h2><p>这次要立的简单一点，省的又完不成</p><ul><li><input disabled="" type="checkbox"> 每季度更新至少一篇技术博客</li><li><input disabled="" type="checkbox"> 学习模型端侧部署相关知识，至少能够完成常用模型的端侧部署</li><li><input disabled="" type="checkbox"> 继续补习数学知识，本年内至少完成微积分和线性代数内容学习</li><li><input disabled="" type="checkbox"> 拿下驾照，自动挡就行</li><li><input disabled="" type="checkbox"> 学习人像摄影，比以前拍的好看就行</li><li><input disabled="" type="checkbox"> 不惜一切代价将历史遗留项目结项</li><li><input disabled="" type="checkbox"> 学习化妆，做到能出cos</li><li><input disabled="" type="checkbox"> 降低游戏时长，除去明日方舟与终末地日常，其余游戏暂时全部移除</li><li><input disabled="" type="checkbox"> 开始学习英语，3-5年完成雅思</li><li><input disabled="" type="checkbox"> 开始学习日语，5-10年完成至少N2(这个没英语优先级高嘿嘿)</li><li><input disabled="" type="checkbox"> 学习大模型的多模态相关，如VLM的微调等知识</li><li><input disabled="" type="checkbox"> 详细研究mbti，想办法让自己发展出entj的能力(这个难度有点高哦)</li></ul><h2 id="其实最费精力的事构建一个完善的计划，巧了现在gpt可以做到哈哈哈哈"><a href="#其实最费精力的事构建一个完善的计划，巧了现在gpt可以做到哈哈哈哈" class="headerlink" title="其实最费精力的事构建一个完善的计划，巧了现在gpt可以做到哈哈哈哈"></a>其实最费精力的事构建一个完善的计划，巧了现在gpt可以做到哈哈哈哈</h2><p>把我刚才写的内容交给gpt，无脑执行就完事了。我让gpt生成了2026执行方案，直接按照这个方案执行就vans了哈哈哈哈。<br>如果哪个方案感觉不够详细的还可以让他细化，真方便啊。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>生活-计划</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>新年计划</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>2025年终总结</title>
+    <link href="/2026/02/09/2025%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/"/>
+    <url>/2026/02/09/2025%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</url>
+    
+    <content type="html"><![CDATA[<h2 id="更新博客果然是一件很艰难的事"><a href="#更新博客果然是一件很艰难的事" class="headerlink" title="更新博客果然是一件很艰难的事"></a>更新博客果然是一件很艰难的事</h2><p>输出永远比输入困难，每年都立下flag要稳定更新博客，每年都很难做到(估计今年也是一样)。之前有看到过建议低剂量循序渐进的，这次干脆放宽一点好了，一个季度能出一篇技术类的就算胜利。</p><h2 id="去年也算完成了一个人生大事的一半"><a href="#去年也算完成了一个人生大事的一半" class="headerlink" title="去年也算完成了一个人生大事的一半"></a>去年也算完成了一个人生大事的一半</h2><p>工作上倒是不温不火，不过下半年出差做项目终于悟道。有些事情得自己去抗自己去做，怎么样都是逃不掉的，倒不如一开始就干脆直接抗下，也省的后面焦头烂额不知所措。希望以后能对项目的整体进度有更好的把握吧。</p><p>人生上倒是有一些进展，情商up中，希望今年能把这个人生大事的后半部分完成。</p><p>学习上今年倒是断断续续把微积分重学了一点。学习了更多关于光学方面的知识吧(也是项目逼得)，顺带还玩了一把3d打印。</p><h2 id="回望3年前的计划，我完成了哪些？"><a href="#回望3年前的计划，我完成了哪些？" class="headerlink" title="回望3年前的计划，我完成了哪些？"></a>回望3年前的计划，我完成了哪些？</h2><ul><li><input disabled="" type="checkbox"> 每月至少更新一篇技术类博客文章</li><li><input checked="" disabled="" type="checkbox"> 技术上更加精进</li><li><input checked="" disabled="" type="checkbox"> 人际交往上能够有所提升，最起码要稍微会说话点…</li><li><input disabled="" type="checkbox"> 的一年至少看完5本书吧，技术书籍不算在内，定时更新读书笔记</li><li><input checked="" disabled="" type="checkbox"> 通关steam账号里的5款游戏(以3A为准)</li><li><input disabled="" type="checkbox"> 试着把过去的ow录屏做一个集锦</li><li><input disabled="" type="checkbox"> 还是要把英语水平提升上去，争取年末时候做到无障碍刷视频</li><li><input disabled="" type="checkbox"> 日语教科书(至少上册)看完</li><li><input checked="" disabled="" type="checkbox"> 欠款还清，开始攒钱</li><li><input disabled="" type="checkbox"> 新冠恢复之后想办法提升身体素质</li><li><input checked="" disabled="" type="checkbox"> Linux</li><li><input checked="" disabled="" type="checkbox"> Docker</li><li><input checked="" disabled="" type="checkbox"> 机器学习相关的数学知识</li><li><input checked="" disabled="" type="checkbox"> Python进阶与精进</li></ul><p>这么一看完成的还算可观，短期计划完成4&#x2F;10，长期计划全部都实现了，现在不仅会docker，还能搞lxd，顺手再搞一手树莓派和jetson。<br>目前可以开始考虑使用学到的东西落地一些项目了。此外还需要学习更多知识。</p><h1 id="学海无涯"><a href="#学海无涯" class="headerlink" title="学海无涯~"></a>学海无涯~</h1><p>学吧就，这辈子都学不完的。能学多少是多少，学到的多多益善。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>生活-感悟</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>年终总结</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>重返未来1999肉鸽体验</title>
+    <link href="/2024/05/31/%E9%87%8D%E8%BF%94%E6%9C%AA%E6%9D%A51999%E8%82%89%E9%B8%BD%E4%BD%93%E9%AA%8C/"/>
+    <url>/2024/05/31/%E9%87%8D%E8%BF%94%E6%9C%AA%E6%9D%A51999%E8%82%89%E9%B8%BD%E4%BD%93%E9%AA%8C/</url>
+    
+    <content type="html"><![CDATA[<h2 id="重返未来1999黄昏的音序肉鸽常驻活动体验"><a href="#重返未来1999黄昏的音序肉鸽常驻活动体验" class="headerlink" title="重返未来1999黄昏的音序肉鸽常驻活动体验"></a>重返未来1999黄昏的音序肉鸽常驻活动体验</h2><p><strong>什么？药剂？不懂，我玩软盘的</strong></p><h3 id="比起上次肉鸽，确实优化了很多"><a href="#比起上次肉鸽，确实优化了很多" class="headerlink" title="比起上次肉鸽，确实优化了很多"></a>比起上次肉鸽，确实优化了很多</h3><p>从上手难度上来说，这次肉鸽下降了很多。这次不仅将难度进行了更为细致的划分，还在低难度下提供了平衡模式，来让练度不够的玩家也可以进行最低程度的游玩，并且可以保证将奖励肝完。相比于上次及其离谱的怪物强度，这次怪物的强度整体上都进行了数值上的削弱，再配合上新增加的各种系统联动，玩家在道中和面对boss时暴毙的几率大幅下降。</p><p>总体肝度也进行了下调，我总共游玩了8局左右就拿满了活动奖励，平均一局时长在2个小时。总的来说，玩家基本上只需要花费10-20小时的时间就可以把奖励拿齐。这是一个非常不错的时间，不会让人感觉腻的同时，还能够保留足够的新鲜感与惊喜感，而当玩家逐渐上手时，奖励拿齐了，他自然会去愿意使用自己已经学会的内容，再去挑战一遍又一遍，即便没有奖励。</p><p>这次的噪声系统比起上次的招募系统要好的多，上次的招募系统在招募到角色后玩家居然还需要对招募的角色一层一层的进行升级，以解锁在玩法之外已经养成过的内容，这次的噪声系统只要拿到角色就是满练度，前期道中推图的爽感一下子就上来了，也能让人把更多的精力放在如何进行物品搭配等其他系统上。</p><p>这次活动还重做了上次的造物系统，对造物系统进行了流派的划分以及职能的划分，四种职能七种流派，组合起来真的比上次要爽的多。而且这次对战斗房、奖励房的奖励也进行了优化，获得的奖励也更加大方，品质也更好，打起架来也是更加的舒服。</p><h3 id="当然问题还是有的"><a href="#当然问题还是有的" class="headerlink" title="当然问题还是有的"></a>当然问题还是有的</h3><p>造物流派和职能的引导不足，扔给你一张图一段话自己去看，‘共鸣’是啥？‘同振’又是啥？怎么触发？说的很含糊，对于玩过肉鸽模式的老玩家来说，这些新的流派是个问题，但是对于没玩过肉鸽的新玩家来说，流派是个问题。当然了，本身肉鸽中存在大量的机制与流派是很正常的，这能够变相体现游戏内容量。不过如何通过更加精确明晰的描述来告诉玩家这些机制与流派的原理和玩法，才是制作人们，特别是文案组和策划组需要着重考虑的问题了。</p><p>饭够了但是胃口不足，造物给的多但是能够容纳的格子数不够，这个在游玩过程中是非常难受的一件事情。这次的造物系统明显参考了今年早些时候大火的背包决斗，引入了‘背包’和‘空间占用’这两个概念，将造物系统和七巧板融合在一起，并且让相邻或者同属性的造物产生联动，这是很不错的设计。虽然可以理解在手机屏幕空间有限的前提下变动背包大小可能会带来的种种问题，但是我仍旧存在这样一个问题，在rougelite的框架下，这个‘空间’能否发生一些改变和增长呢？</p><p>现在的造物给的很大方，大方到太多了，以至于背包空间根本放不下那么多的造物，必须进行取舍，那么这时也就意味着角色所能获取到的buff与数值将会被限定在某个值的下方，难以通过复合流派发生化学反应打出具备节目效果的伤害。我认为流派是需要被设计为允许复合的，而黄昏的音序中也确实存在一些同时具备多个流派的造物，那么这种情况下，背包的空间极大的限制了复合流派的发挥。</p><p>这里特别提一嘴电能流派，不仅各个自己占用空间巨大，还需要额外增加一个充能发条占两个格子来为这些造物充能，以至于电能流派要花费大量的时间在背包空间的控制与管理上，以至于最后干脆弃疗，因为新的造物已经没有空间放进去了。</p><h3 id="在前辈的肩膀上"><a href="#在前辈的肩膀上" class="headerlink" title="在前辈的肩膀上"></a>在前辈的肩膀上</h3><p>整个肉鸽游玩下来，给我最大的感受就是被淋了一场暴雨，我的所见皆为过去。是的，整个肉鸽的体验就是各种优秀前辈的融合。</p><p>首先就是对明日方舟肉鸽系统的借鉴，这里我不再去考据明日方舟的肉鸽系统又是从哪里学来的，根据1999的恢奇牌儿的设计，再加上相似的运营定位，我们可以很大程度上认为深蓝的制作团队在不断学习明日方舟的游戏设计和运营思路，很多东西都是学会之后拿来用的。细数一下，这次的肉鸽路线选择界面、活动主界面、收藏物界面以及剧情界面，还有技能树升级界面，嗯，好熟悉的感觉。</p><p>其次就是背包乱斗，格子的摆放、物品的联动都是相似的玩法。所以什么时候黄昏的音序里面背包格子也可以增加？或者把一些造物的占用格子减小也行。</p><p>其实不仅仅是这次，上次的肉鸽也是很明显的借鉴，路线选择是月圆之夜的，san值管理是无间冥寺的，招募系统是明日方舟的。</p><p>这里提到这些并不是说游戏抄袭怎么怎么样，古人有云“天下文章一大抄”，游戏也是一样，任何文化创作领域的东西都是这样。书法有临帖，绘画有临摹，即便是小说，也有各式各样的用典与摘抄。你要先去照着着前人走过的路，如同孩子一般亦步亦趋的走过去，只有当你踏入到那个，前人曾经到达，而你未曾停下的终点时，才是真正迎来创造力的时刻。我们需要抵制的，是对美术素材、数据模型以及代码非法的盗取与复制使用。</p><p>而像黄昏的音序这样的，我们不仅不用过分的斥责他，而是应当鼓励他，解决掉游玩体验中不好的部分，在独属于1999的游戏框架下改进出适合他自己的肉鸽。我认为这样我们才能引导着游戏行业逐渐向着我们所期盼的样子发展。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>游戏-记录</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>游戏体验</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>2024年中期总结</title>
+    <link href="/2024/05/30/2024%E5%B9%B4%E4%B8%AD%E6%9C%9F%E6%80%BB%E7%BB%93/"/>
+    <url>/2024/05/30/2024%E5%B9%B4%E4%B8%AD%E6%9C%9F%E6%80%BB%E7%BB%93/</url>
+    
+    <content type="html"><![CDATA[<h2 id="时隔一年我终于想起了我的博客"><a href="#时隔一年我终于想起了我的博客" class="headerlink" title="时隔一年我终于想起了我的博客"></a>时隔一年我终于想起了我的博客</h2><h3 id="那么这将近一年半的时间里都发生了什么呢"><a href="#那么这将近一年半的时间里都发生了什么呢" class="headerlink" title="那么这将近一年半的时间里都发生了什么呢"></a>那么这将近一年半的时间里都发生了什么呢</h3><p>万万没想到这个博客有一年没有动，也就相当于我去年立下的flag全都失败了。</p><p>真的完全失败了么？倒也没有。</p><p>细细数来，去年确实在人际交往上比起之前好了很多，相对来说没有那么自闭与尴尬，也就是俗话说的脸皮厚。游戏通关的记录翻找了一下，五款应该是有的，再加上去年又额外游玩了两款二游。资金情况也逐渐好转，开始学着攒钱。技术上的成长我个人认为不算很多，更多的是对目前业务的整理与整合。</p><p>所以实际上完成两条半，flag完成率25%哈哈哈哈哈哈。</p><p>2.5这个数字是有什么魔力么？鸡哥也好五条悟也好都跟这个数字强相关。</p><p>技术上，这几个技术还真就多学了一些，现在公司内部的代码平台和标注平台都是我用docker搭建部署的，顺便加强了一下linux和docker的学习认知。python这个语言也逐渐能写出一些有结构的东西来了，也是成功的将面向对象思想发挥了出来。至于说机器学习，我的增长更多的是在今年上半年上，今年上半年这个项目真的是搞生搞死。</p><h3 id="逐渐感觉到python的局限性"><a href="#逐渐感觉到python的局限性" class="headerlink" title="逐渐感觉到python的局限性"></a>逐渐感觉到python的局限性</h3><p>我现在所面对的任务大多都对性能有一定的要求，或许，而且对算法以及封装的要求也越来越高。逐渐的我发现在很多时候python的运行速度与资源消耗成为了瓶颈，而且目前python的岗位需求偏少，更多的是要不仅仅会python，要同时兼顾其他多门语言。我觉得我需要在c或者c++上花一定的时间进行学习，来保证在未来的时候自己有更加强劲的竞争力。</p><h3 id="虽然现在马上6月了，还是立几个半年期的flag吧！"><a href="#虽然现在马上6月了，还是立几个半年期的flag吧！" class="headerlink" title="虽然现在马上6月了，还是立几个半年期的flag吧！"></a>虽然现在马上6月了，还是立几个半年期的flag吧！</h3><ol><li>每周写一篇文章，保证自己的文字输出。这个并不限制题材，主要是锻炼自己的语言表达能力与思辨能力。为了防止一些不必要的事情发生，有些文章还是隐藏掉比较好。</li><li>每天花10-30分钟写一些工作之外的代码。语言不限，只要写出来就好。</li><li>每天花10-30分钟看文化类书籍，提高自己的人文素养。</li><li>每天花10-30分钟看技术类书籍，最好配合着写点代码，两个一起完成</li><li>这些都做完的前提下再去玩游戏，除去崩铁、方舟与1999的日常之外，其他游戏在进行之余需要做一些总结，最好写一些游玩体验。我会在博客中专门增加一个分支来进行。</li></ol><p>以上这些内容尽可能的每天都去完成，毕竟有时候忙起来人确实会顾不上某些事情。</p><p><strong>争取做一个时间管理大师！</strong></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>生活-感悟</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>年中总结</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>笔记本安装ubuntu单系统踩坑记录</title>
+    <link href="/2023/03/17/%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%AE%89%E8%A3%85ubuntu%E5%8D%95%E7%B3%BB%E7%BB%9F%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/"/>
+    <url>/2023/03/17/%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%AE%89%E8%A3%85ubuntu%E5%8D%95%E7%B3%BB%E7%BB%9F%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/</url>
+    
+    <content type="html"><![CDATA[<p>最近把大学时候用的独显笔记本翻出来重新安装了一套Ubuntu系统，没想到坑还挺多的，特别在此记录一下</p><h2 id="一、关于电脑配置"><a href="#一、关于电脑配置" class="headerlink" title="一、关于电脑配置"></a>一、关于电脑配置</h2><p>我的老笔记本是神舟战神Z7M-KP7GT，祖传蓝天公模，主板bios都没技术服务的那种。机器详细配置cpu为i7-7700HQ，显卡1050ti，内存8+16G，<br>存储的情况稍微复杂一些，简单来说现在电脑里是原装的128G固态和全新1T西数蓝盘，老的机械盘和承载win10系统的500G西数SN500固态都卸下来放一边。</p><p>也就是说目前电脑里的两个存储盘都是空盘。因为我想这次直接放弃在这个老本子上安装Windows系统，装成一台纯粹的ubuntu。老的存储准备再重新找个准系统扔进去。</p><p>Ubuntu系统选择的22.04LTS，装新不装旧，主打一手折腾，而且这台机器后面打算跑cvat和labelimg，考虑到现在pytorch和cuda的迭代，新版可能反而比旧的能少折腾一些吧。</p><h2 id="二、开机卡logo"><a href="#二、开机卡logo" class="headerlink" title="二、开机卡logo"></a>二、开机卡logo</h2><p>找个U盘做系统盘，随便找个烧录软件做一下就好。</p><p>bios改一下boot顺序，进入U盘。选择第一条Try or Install Ubuntu，刚进去就碰到了第一个bug：在刚刚显示logo界面的时候，转圈圈转着转着就卡死，风扇也被拉满呜呜响。</p><p>以前装双系统的时候就碰到过类似的问题，按照网上说的在grub界面按e进入命令行，在<code>quiet splash</code>后面删去<code>---</code>并改为<code>nomodeset</code>是不管用的。应当把<code>nomodeset</code>修改为<code>acpi=off</code>，再按下F10，这样就可以正常进入安装流程了。</p><p>另外在安装的流程中要么勾选为无线和图形硬件安装第三方驱动软件，要么进入系统后在<code>软件和更新</code>-<code>附加驱动</code>中勾选想要安装的N卡驱动，首次进入grub时也不能忘记增加<code>acpi=off</code>，在N卡驱动成功安装之后就不需要这个设置了，所以不需要专门修改grub配置将<code>acpi=off</code>设置为永久。</p><h2 id="三、系统分区"><a href="#三、系统分区" class="headerlink" title="三、系统分区"></a>三、系统分区</h2><p>因为两个盘都是空盘，我直接对选择了清除整个磁盘并安装的选项，让系统自行分区。但是很快安装过程中就出现了一个非常严重的bug:</p><blockquote><p>grub-install &#x2F;dev&#x2F;sda 失败，这是一个致命错误</p></blockquote><p>这个错误折磨了我两天时间，期间我换了无数种分区方案，什么<code>/boot</code>、<code>BIOS保留空间</code>都试了个遍，最后摆烂到让系统自己决定。可惜这个bug似乎与分区没什么关系。</p><p>不过经过两天的研究，我发现其实现在ubuntu的系统分区不需要像以前那么麻烦了，只需要一个500M左右的efi引导分区和一个挂载点为<code>/</code>的根目录分区就可以。</p><h2 id="四、Grub错误"><a href="#四、Grub错误" class="headerlink" title="四、Grub错误"></a>四、Grub错误</h2><p>刚才提到的grub安装失败，原因大概率是主板使用的引导方式和U盘制作时选择的引导方式不同导致。众所周知现在市面上主流的引导方式是UEFI+GPT，老机子则使用的Legacy+MBR，在制作引导盘时，我使用的rufus软件提供了两种选择，我都拿去做了尝试，但是都发生了同样的错误。那么问题在哪里呢？</p><p>其实是主板问题，开头的时候我提到过，这款机子采用的是蓝天的公模，同样的，主板也是蓝天的主板。然而，在这个主板的BIOS中并没有提供UEFI引导选择，也就是各种博文中提到的<code>选择UEFI或者Legacy引导方式</code>，主板中只提供了一个选项，<code>UEFI Boot Enabled or Disabled</code>。但是即便是禁用了UEFI引导，安装时仍旧会抛出同样的问题，我严重怀疑是系统在安装时的指令也存在一定的问题，在我手动<code>grub-install</code>时候，系统会抛出错误找不到efi文件，猜测可能是grub写入的方式，刚好和主板能够提供的引导方式岔开。当然我还有一层怀疑是以前在安装双系统的时候折腾的东西影响到了主板的bios，不幸的是这款主板在蓝天官网上已经没有可以拿来重装bios的资料文件了（好惨的版本）</p><p>就在我为如何安装系统头疼不已的时候，突然翻到的关于虚拟机的博文给了我灵感：<strong>既然这个主板不能安装，那为什么不换个机子安装呢？</strong></p><p>于是，我把固态拆了下来放到硬盘盒里，通过工作机切入主板，进入引导盘设定安装一气呵成，成了！</p><p>但是在安装程序成功弹出<code>安装成功！请重启系统</code>的提示的时候，我怀着激动的心，伸着颤抖的手，做了一件非常愚蠢的事情：就在重启再次进入bios的时候，我把装着系统的固态盘拔下来了！想也没想就直接拔了！</p><p>既然已经拔了，冷静下来的我选择直接将固态安装回笔记本上，不幸的事终究发生了，虽然系统正确的安装在了固态盘上，但是EFI引导分区似乎并没有正确的安装完全，进入系统迎面而来的就是grub命令行界面</p><p>考虑到系统文件都已经正确写入到固态盘中，理论上现在只需要修复grub就可以成功安装。首先尝试直接通过grub命令行修复，结果<code>ls</code>之后发现引导分区里只有一个<code>/efi</code>的文件夹，根本没有想要的<code>/grub</code>文件夹。于是我重新进入U盘引导盘系统，选择<code>Try Ubuntu</code>进入图形界面，安装上了<code>boot repair</code>工具</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo add-apt-repository ppa:yannubuntu/boot-repair &amp;&amp; sudo apt update<br>sudo apt install -y boot-repair &amp;&amp; boot-repair<br></code></pre></td></tr></table></figure><p>进入<code>boot repair</code>界面之后也不需要什么<code>advanced options</code>，直接用<code>recommend</code>进行修复就行，修复成功后重启系统进入ubuntu，别忘了加上<code>acpi=off</code>，进入成功，万事大吉！</p><h2 id="开始享用Ubuntu吧！"><a href="#开始享用Ubuntu吧！" class="headerlink" title="开始享用Ubuntu吧！"></a>开始享用Ubuntu吧！</h2><p>以上就是本人在这周来来回回折腾ubuntu的结果，<code>acpi=off</code>这条指令也是从鸟哥的私房菜里面翻到的，只能说有时候搜索引擎不如直接翻书来的准确吧，毕竟网上的博文特别是csdn都是各种各样的坑。</p><p>带独显的笔记本安装ubuntu总是会在驱动上被卡很久，主板也可能出各种各样奇奇怪怪的bug，希望未来这方面的问题能够少些吧，每次安装都被搞一手真的是头大。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术-记录</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>ubuntu</tag>
+      
+      <tag>系统安装</tag>
+      
+      <tag>踩坑</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>最终幻想15通关感想</title>
     <link href="/2023/02/26/%E6%9C%80%E7%BB%88%E5%B9%BB%E6%83%B315%E9%80%9A%E5%85%B3%E6%84%9F%E6%83%B3/"/>
     <url>/2023/02/26/%E6%9C%80%E7%BB%88%E5%B9%BB%E6%83%B315%E9%80%9A%E5%85%B3%E6%84%9F%E6%83%B3/</url>
@@ -146,7 +308,7 @@
     <link href="/2022/12/25/%E6%9C%94%E5%8D%97%E5%AF%92/"/>
     <url>/2022/12/25/%E6%9C%94%E5%8D%97%E5%AF%92/</url>
     
-    <content type="html"><![CDATA[<p>距离上次更新文章已经过去了两年有余，原因无他，抑郁症等多方面的压力导致我更新博客的兴趣大大降低。虽然后来有尝试购买服务器以及域名，为的是一来可以搭建更加个人化更加自由的博客，二来还可以学习一下web技术，但是最后还是又不了了之。</p><p>随着工作以及生活的发展，我的抑郁症已经基本治愈，外加上表达欲的逐渐旺盛，我终于在今天写下了新的博文。</p><h2 id="Hexo框架"><a href="#Hexo框架" class="headerlink" title="Hexo框架"></a>Hexo框架</h2><p>上一个博客使用的是jekyll框架，也就是GitHub Page服务推荐的框架。同时直接clone了<a href="http://huangxuan.me/">黄玄</a>大佬的主题，但是由于鄙人能力不足，改来改去总是不满意，达不到自己想要的效果,还留下了一堆bug。后来发现身边的同学和大佬都在使用Hexo，故而这次动了心思，决定使用Hexo搭建一个新的博客，也算是人生新阶段的开始。</p><h3 id="安装与配置"><a href="#安装与配置" class="headerlink" title="安装与配置"></a>安装与配置</h3><p>安装是非常简单的，首先按照<a href="https://hexo.io/zh-cn/docs/">Hexo官方文档</a>的要求安装好一个博客环境，根据<a href="https://hexo.io/zh-cn/docs/one-command-deployment">Hexo一键部署</a>将博客与GitHub的仓库链接，最后找到喜欢的主题安装。本人选用的主题是<a href="https://fluid-dev.github.io/hexo-fluid-docs/start/">Hexo Fluid</a>，按照文档配置好。</p><h2 id="域名选购"><a href="#域名选购" class="headerlink" title="域名选购"></a>域名选购</h2><p>因为备案过于繁琐且要求甚多，准备的时间也非常之长，再加上这次我的博客不打算使用国内的服务器，所以干脆直接通过国外注册商购买域名。经过简单的了解后我选择从<a href="https://www.namesilo.com/">Namesilo</a>购买，这个top尾缀的域名一年不到2美元，属实便宜。</p><p>Namesilo的DNS配置也异常的方便，在Domain Manage的界面选择右侧的小篮球，页面下面有GitHub模板可以直接使用。DNS解析需要约两个小时，在GitHub页面配置的时候静候一会就好。</p><h2 id="开写"><a href="#开写" class="headerlink" title="开写"></a>开写</h2><p>输入<code>hexo s</code>启动实时渲染,<code>hexo d</code>直接部署到GitHub上。输入网址，成功！</p><h3 id="谷歌流量分析"><a href="#谷歌流量分析" class="headerlink" title="谷歌流量分析"></a>谷歌流量分析</h3><p>到<code>_config.fluid.yml</code>里面，找到<code>web_analytics</code>，在<code>google</code>和<code>gtag</code>两个参数中<strong>都填上ID</strong>，注意是全字母的那个。</p><h3 id="评论区开启"><a href="#评论区开启" class="headerlink" title="评论区开启"></a>评论区开启</h3><p>我选用的giscus，毕竟发布在discussion要比issue优雅的多。<br>首先在<code>_config.fluid.yml</code>里面将<code>comments</code>功能打开并设置为<code>giscus</code>，接着打开<a href="https://giscus.app/zh-CN">giscus</a>，按照操作一步一步做完后将最后生成的js代码中的前四个参数写进<code>_config.fluid.yml</code>里<code>giscus</code>的配置中即可，配置文件除了前四行都不需要动，我推测懒加载功能应该已经写到别的地方了，这个地方不需要额外加参数进行配置。</p><h2 id="一点小小的感想"><a href="#一点小小的感想" class="headerlink" title="一点小小的感想"></a>一点小小的感想</h2><p>当初头疼不已的评论功能如今通过GitHub自带的discussion就可以实现，过去的四年里真的错过了好多有意思的东西阿…现在才回想起来当初被这个评论功能的实现搞得焦头烂额，最后无奈放弃。</p>]]></content>
+    <content type="html"><![CDATA[<p>距离上次更新文章已经过去了两年有余，原因无他，抑郁症等多方面的压力导致我更新博客的兴趣大大降低。虽然后来有尝试购买服务器以及域名，为的是一来可以搭建更加个人化更加自由的博客，二来还可以学习一下web技术，但是最后还是又不了了之。</p><p>随着工作以及生活的发展，我的抑郁症已经基本治愈，外加上表达欲的逐渐旺盛，我终于在今天写下了新的博文。</p><h2 id="Hexo框架"><a href="#Hexo框架" class="headerlink" title="Hexo框架"></a>Hexo框架</h2><p>上一个博客使用的是jekyll框架，也就是GitHub Page服务推荐的框架。同时直接clone了<a href="http://huangxuan.me/">黄玄</a>大佬的主题，但是由于鄙人能力不足，改来改去总是不满意，达不到自己想要的效果,还留下了一堆bug。后来发现身边的同学和大佬都在使用Hexo，故而这次动了心思，决定使用Hexo搭建一个新的博客，也算是人生新阶段的开始。</p><h3 id="安装与配置"><a href="#安装与配置" class="headerlink" title="安装与配置"></a>安装与配置</h3><p>安装是非常简单的，首先按照<a href="https://hexo.io/zh-cn/docs/">Hexo官方文档</a>的要求安装好一个博客环境，根据<a href="https://hexo.io/zh-cn/docs/one-command-deployment">Hexo一键部署</a>将博客与GitHub的仓库链接，最后找到喜欢的主题安装。本人选用的主题是<a href="https://fluid-dev.github.io/hexo-fluid-docs/start/">Hexo Fluid</a>，按照文档配置好。</p><h2 id="域名选购"><a href="#域名选购" class="headerlink" title="域名选购"></a>域名选购</h2><p>因为备案过于繁琐且要求甚多，准备的时间也非常之长，再加上这次我的博客不打算使用国内的服务器，所以干脆直接通过国外注册商购买域名。经过简单的了解后我选择从<a href="https://www.namesilo.com/">Namesilo</a>购买，这个top尾缀的域名一年不到2美元，属实便宜。</p><p>Namesilo的DNS配置也异常的方便，在Domain Manage的界面选择右侧的小篮球，页面下面有GitHub模板可以直接使用。DNS解析需要约两个小时，在GitHub页面配置的时候静候一会就好。</p><h2 id="开写"><a href="#开写" class="headerlink" title="开写"></a>开写</h2><p>输入<code>hexo new post &#39;文章名&#39;</code>就可以开始写了，文章会自动分配日期的！</p><p>为了隐藏部分文章，在文章开头增加<code>hide: true</code>，就可以不在首页和其他归档分类页里展示，只能通过特定的链接进入。</p><p>输入<code>hexo s</code>启动实时渲染,<code>hexo d</code>直接部署到GitHub上。输入网址，成功！</p><h3 id="谷歌流量分析"><a href="#谷歌流量分析" class="headerlink" title="谷歌流量分析"></a>谷歌流量分析</h3><p>到<code>_config.fluid.yml</code>里面，找到<code>web_analytics</code>，在<code>google</code>和<code>gtag</code>两个参数中<strong>都填上ID</strong>，注意是全字母的那个。</p><h3 id="评论区开启"><a href="#评论区开启" class="headerlink" title="评论区开启"></a>评论区开启</h3><p>我选用的giscus，毕竟发布在discussion要比issue优雅的多。<br>首先在<code>_config.fluid.yml</code>里面将<code>comments</code>功能打开并设置为<code>giscus</code>，接着打开<a href="https://giscus.app/zh-CN">giscus</a>，按照操作一步一步做完后将最后生成的js代码中的前四个参数写进<code>_config.fluid.yml</code>里<code>giscus</code>的配置中即可，配置文件除了前四行都不需要动，我推测懒加载功能应该已经写到别的地方了，这个地方不需要额外加参数进行配置。</p><h2 id="一点小小的感想"><a href="#一点小小的感想" class="headerlink" title="一点小小的感想"></a>一点小小的感想</h2><p>当初头疼不已的评论功能如今通过GitHub自带的discussion就可以实现，过去的四年里真的错过了好多有意思的东西阿…现在才回想起来当初被这个评论功能的实现搞得焦头烂额，最后无奈放弃。</p>]]></content>
     
     
     <categories>

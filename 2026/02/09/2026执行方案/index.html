@@ -1,0 +1,1384 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Southcold">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="以下内容为gpt给出的详细执行方案，我将使用此方案按照规划执行很好，这次你给出的真实基线信息非常关键，我会在此基础上彻底重构一版“贴着你当前能力线走”的计划，而不是再从入门假设出发。 下面这份计划有三个核心原则：  不重复你已经具备的能力（否则就是浪费生命） 所有学习都必须能“落到你现有设备上”（Orin Nano &#x2F; RPi5 &#x2F; Ollama &#x2F; Qwen3-VL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2026执行方案">
+<meta property="og:url" content="https://southcold.top/2026/02/09/2026%E6%89%A7%E8%A1%8C%E6%96%B9%E6%A1%88/index.html">
+<meta property="og:site_name" content="SouthCold">
+<meta property="og:description" content="以下内容为gpt给出的详细执行方案，我将使用此方案按照规划执行很好，这次你给出的真实基线信息非常关键，我会在此基础上彻底重构一版“贴着你当前能力线走”的计划，而不是再从入门假设出发。 下面这份计划有三个核心原则：  不重复你已经具备的能力（否则就是浪费生命） 所有学习都必须能“落到你现有设备上”（Orin Nano &#x2F; RPi5 &#x2F; Ollama &#x2F; Qwen3-VL">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-02-08T17:51:04.000Z">
+<meta property="article:modified_time" content="2026-02-08T17:59:53.470Z">
+<meta property="article:author" content="Southcold">
+<meta property="article:tag" content="执行方案">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>2026执行方案 - SouthCold</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"southcold.top","root":"/","version":"1.9.4","typing":{"enable":false,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-DBD9GGLNXT","gtag":"G-DBD9GGLNXT","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-DBD9GGLNXT', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+    <!-- Google gtag.js -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.googletagmanager.com/gtag/js?id=G-DBD9GGLNXT', function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-DBD9GGLNXT');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>SouthCold</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle">2026执行方案</span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        Southcold
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-02-09 01:51" pubdate>
+          2026年2月9日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          33 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">2026执行方案</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：2026年2月9日 凌晨
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="以下内容为gpt给出的详细执行方案，我将使用此方案按照规划执行"><a href="#以下内容为gpt给出的详细执行方案，我将使用此方案按照规划执行" class="headerlink" title="以下内容为gpt给出的详细执行方案，我将使用此方案按照规划执行"></a>以下内容为gpt给出的详细执行方案，我将使用此方案按照规划执行</h1><p>很好，这次你给出的<strong>真实基线信息非常关键</strong>，我会在此基础上<strong>彻底重构一版“贴着你当前能力线走”的计划</strong>，而不是再从入门假设出发。</p>
+<p>下面这份计划有三个核心原则：</p>
+<ol>
+<li><strong>不重复你已经具备的能力</strong>（否则就是浪费生命）</li>
+<li><strong>所有学习都必须能“落到你现有设备上”</strong>（Orin Nano &#x2F; RPi5 &#x2F; Ollama &#x2F; Qwen3-VL）</li>
+<li><strong>出差友好：任何一周断掉 7–14 天也不会整体崩盘</strong></li>
+</ol>
+<hr>
+<h1 id="一、你的当前真实能力基线（用于校准）"><a href="#一、你的当前真实能力基线（用于校准）" class="headerlink" title="一、你的当前真实能力基线（用于校准）"></a>一、你的当前真实能力基线（用于校准）</h1><p>我先明确“你现在站在哪一层”，这是后续所有安排的依据：</p>
+<h3 id="数学"><a href="#数学" class="headerlink" title="数学"></a>数学</h3><ul>
+<li><p>✅ 单变量微积分 <strong>MIT 18.01 已到第 24 课（三角函数积分 &amp; 三角替换）</strong></p>
+</li>
+<li><p>❌ 尚未系统进入：</p>
+<ul>
+<li>常微分方程（ODE）</li>
+<li>多变量微积分</li>
+<li>线性代数（工程向）</li>
+</ul>
+</li>
+</ul>
+<p>👉 <strong>结论</strong>：你已经过了“数学入门期”，现在是<strong>工程化数学补全期</strong></p>
+<hr>
+<h3 id="英语"><a href="#英语" class="headerlink" title="英语"></a>英语</h3><ul>
+<li>CET-4 裸过</li>
+<li>CET-6 裸考 &lt; 400</li>
+<li>技术阅读基本没问题，<strong>听说输出明显短板</strong></li>
+</ul>
+<p>👉 <strong>结论</strong>：目标不应是“考试”，而是<br><strong>技术听力 + 可用输出 → 再反推雅思</strong></p>
+<hr>
+<h3 id="日语"><a href="#日语" class="headerlink" title="日语"></a>日语</h3><ul>
+<li>多年日漫听力经验</li>
+<li>被动输入强，主动体系弱</li>
+</ul>
+<p>👉 <strong>结论</strong>：直接走 <strong>“N3 → N2 工程化路径”</strong>，跳过五十音&#x2F;入门</p>
+<hr>
+<h3 id="工程-amp-AI"><a href="#工程-amp-AI" class="headerlink" title="工程 &amp; AI"></a>工程 &amp; AI</h3><ul>
+<li><p>✅ Orin Nano Super 8G</p>
+</li>
+<li><p>✅ RPi 5 4G</p>
+</li>
+<li><p>✅ Ollama + Qwen3-VL web demo 跑通</p>
+</li>
+<li><p>❌ 尚未系统做：</p>
+<ul>
+<li>VLM 微调（LoRA &#x2F; QLoRA）</li>
+<li>真正的端侧多模态推理工程化</li>
+<li>模型压缩 &#x2F; 量化 &#x2F; 多端适配</li>
+</ul>
+</li>
+</ul>
+<p>👉 <strong>结论</strong>：你已经在<strong>VLM 工程化起跑线前 10%</strong></p>
+<hr>
+<h1 id="二、2026-年-2–12-月总节奏（重构版）"><a href="#二、2026-年-2–12-月总节奏（重构版）" class="headerlink" title="二、2026 年 2–12 月总节奏（重构版）"></a>二、2026 年 2–12 月总节奏（重构版）</h1><p>我把全年拆成 <strong>4 个“工程阶段”</strong>，每个阶段都有明确的“产物”。</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>月份</th>
+<th>核心产物</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Phase A</td>
+<td>2–3 月</td>
+<td>数学补全 + 端侧基础工程</td>
+</tr>
+<tr>
+<td>Phase B</td>
+<td>4–6 月</td>
+<td>VLM 微调 + Jetson 工程化</td>
+</tr>
+<tr>
+<td>Phase C</td>
+<td>7–9 月</td>
+<td>多模态系统整合 + 输出</td>
+</tr>
+<tr>
+<td>Phase D</td>
+<td>10–12 月</td>
+<td>能力固化 + 长期语言体系</td>
+</tr>
+</tbody></table>
+<hr>
+<h1 id="三、详细【月计划】"><a href="#三、详细【月计划】" class="headerlink" title="三、详细【月计划】"></a>三、详细【月计划】</h1><hr>
+<h2 id="2026-02｜数学与端侧工程并行月"><a href="#2026-02｜数学与端侧工程并行月" class="headerlink" title="2026.02｜数学与端侧工程并行月"></a><strong>2026.02｜数学与端侧工程并行月</strong></h2><p><strong>关键词：补齐“能用但不系统”的短板</strong></p>
+<h3 id="数学-1"><a href="#数学-1" class="headerlink" title="数学"></a>数学</h3><ul>
+<li><p>完成 MIT 18.01 剩余内容：</p>
+<ul>
+<li>反常积分</li>
+<li>参数积分</li>
+<li>初等微分方程（重点）</li>
+</ul>
+</li>
+<li><p>不刷题，只做：</p>
+<ul>
+<li>推导</li>
+<li>图像理解</li>
+<li>和 ML 中 loss &#x2F; 梯度的联系</li>
+</ul>
+</li>
+</ul>
+<h3 id="工程"><a href="#工程" class="headerlink" title="工程"></a>工程</h3><ul>
+<li><p>Orin Nano：</p>
+<ul>
+<li><p>跑 <strong>非 VLM 模型</strong> TensorRT</p>
+</li>
+<li><p>明确：</p>
+<ul>
+<li>FP16 &#x2F; INT8 性能差异</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>RPi 5：</p>
+<ul>
+<li>ONNX Runtime 推理跑通</li>
+</ul>
+</li>
+</ul>
+<h3 id="英语-1"><a href="#英语-1" class="headerlink" title="英语"></a>英语</h3><ul>
+<li>技术听力为主（每天 20–30 分钟）</li>
+</ul>
+<hr>
+<h2 id="2026-03｜线性代数启动-博客-1"><a href="#2026-03｜线性代数启动-博客-1" class="headerlink" title="2026.03｜线性代数启动 + 博客 1"></a><strong>2026.03｜线性代数启动 + 博客 1</strong></h2><p><strong>关键词：工程数学</strong></p>
+<h3 id="数学-2"><a href="#数学-2" class="headerlink" title="数学"></a>数学</h3><ul>
+<li><p>MIT 18.06：</p>
+<ul>
+<li>向量</li>
+<li>矩阵</li>
+<li>线性变换</li>
+</ul>
+</li>
+<li><p>明确以下概念与 DL 的对应：</p>
+<ul>
+<li>投影</li>
+<li>子空间</li>
+<li>特征值</li>
+</ul>
+</li>
+</ul>
+<h3 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h3><ul>
+<li><p>技术博客第 1 篇：</p>
+<blockquote>
+<p>《在 Jetson Orin Nano 上部署多模态模型的工程实践》</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h2 id="2026-04｜VLM-微调月（LoRA）"><a href="#2026-04｜VLM-微调月（LoRA）" class="headerlink" title="2026.04｜VLM 微调月（LoRA）"></a><strong>2026.04｜VLM 微调月（LoRA）</strong></h2><p><strong>关键词：从“会用”到“能改”</strong></p>
+<h3 id="VLM"><a href="#VLM" class="headerlink" title="VLM"></a>VLM</h3><ul>
+<li><p>Qwen3-VL：</p>
+<ul>
+<li>数据格式</li>
+<li>LoRA &#x2F; QLoRA 原理</li>
+</ul>
+</li>
+<li><p>目标：</p>
+<ul>
+<li>跑通 <strong>一次完整微调流程（哪怕数据很小）</strong></li>
+</ul>
+</li>
+</ul>
+<h3 id="工程-1"><a href="#工程-1" class="headerlink" title="工程"></a>工程</h3><ul>
+<li>显存 &#x2F; 内存 profiling</li>
+<li>Jetson 上模型加载优化</li>
+</ul>
+<hr>
+<h2 id="2026-05｜端侧多模态推理工程"><a href="#2026-05｜端侧多模态推理工程" class="headerlink" title="2026.05｜端侧多模态推理工程"></a><strong>2026.05｜端侧多模态推理工程</strong></h2><p><strong>关键词：工程落地</strong></p>
+<ul>
+<li><p>多模态 pipeline：</p>
+<ul>
+<li>图像 → VLM → 文本 → 控制逻辑</li>
+</ul>
+</li>
+<li><p>Jetson &#x2F; RPi 对比：</p>
+<ul>
+<li>吞吐</li>
+<li>延迟</li>
+<li>功耗</li>
+</ul>
+</li>
+</ul>
+<h3 id="博客"><a href="#博客" class="headerlink" title="博客"></a>博客</h3><ul>
+<li>第 2 篇（偏工程）</li>
+</ul>
+<hr>
+<h2 id="2026-06｜阶段验收"><a href="#2026-06｜阶段验收" class="headerlink" title="2026.06｜阶段验收"></a><strong>2026.06｜阶段验收</strong></h2><p><strong>关键词：闭环</strong></p>
+<ul>
+<li><p>完成：</p>
+<ul>
+<li>VLM 微调 + 端侧推理 demo</li>
+</ul>
+</li>
+<li><p>数学：</p>
+<ul>
+<li>微积分 + 线代工程总结</li>
+</ul>
+</li>
+<li><p>英语：</p>
+<ul>
+<li>听懂 70% 技术视频</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="2026-07｜多模态系统整合"><a href="#2026-07｜多模态系统整合" class="headerlink" title="2026.07｜多模态系统整合"></a><strong>2026.07｜多模态系统整合</strong></h2><ul>
+<li><p>VLM + CV + 规则系统</p>
+</li>
+<li><p>引入：</p>
+<ul>
+<li>多模态决策逻辑</li>
+</ul>
+</li>
+<li><p>博客第 3 篇（系统级）</p>
+</li>
+</ul>
+<hr>
+<h2 id="2026-08｜输出与稳定"><a href="#2026-08｜输出与稳定" class="headerlink" title="2026.08｜输出与稳定"></a><strong>2026.08｜输出与稳定</strong></h2><ul>
+<li><p>英语：</p>
+<ul>
+<li>Shadowing + 技术复述</li>
+</ul>
+</li>
+<li><p>日语：</p>
+<ul>
+<li>N3 语法系统化</li>
+</ul>
+</li>
+<li><p>化妆 &#x2F; Cos：</p>
+<ul>
+<li>技术性学习（不是审美）</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="2026-09｜高级工程化"><a href="#2026-09｜高级工程化" class="headerlink" title="2026.09｜高级工程化"></a><strong>2026.09｜高级工程化</strong></h2><ul>
+<li><p>模型裁剪 &#x2F; 蒸馏理解</p>
+</li>
+<li><p>Jetson 上多模型调度</p>
+</li>
+<li><p>摄影：</p>
+<ul>
+<li>人像 + 光线控制</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="2026-10｜语言强化"><a href="#2026-10｜语言强化" class="headerlink" title="2026.10｜语言强化"></a><strong>2026.10｜语言强化</strong></h2><ul>
+<li><p>英语：</p>
+<ul>
+<li>口语输出 &gt; 输入</li>
+</ul>
+</li>
+<li><p>日语：</p>
+<ul>
+<li>听力 → 阅读迁移</li>
+</ul>
+</li>
+<li><p>博客第 4 篇（年度工程总结）</p>
+</li>
+</ul>
+<hr>
+<h2 id="2026-11｜能力固化"><a href="#2026-11｜能力固化" class="headerlink" title="2026.11｜能力固化"></a><strong>2026.11｜能力固化</strong></h2><ul>
+<li><p>整理：</p>
+<ul>
+<li>端侧部署模板</li>
+<li>VLM 微调 SOP</li>
+</ul>
+</li>
+<li><p>ENTJ 行为模型强化（执行&#x2F;复盘）</p>
+</li>
+</ul>
+<hr>
+<h2 id="2026-12｜年度收官"><a href="#2026-12｜年度收官" class="headerlink" title="2026.12｜年度收官"></a><strong>2026.12｜年度收官</strong></h2><ul>
+<li><p>年终技术总结</p>
+</li>
+<li><p>明确：</p>
+<ul>
+<li>2027 是否冲雅思</li>
+<li>是否开始 N2 正式备考</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="四、【周计划模板】（非常关键）"><a href="#四、【周计划模板】（非常关键）" class="headerlink" title="四、【周计划模板】（非常关键）"></a>四、【周计划模板】（非常关键）</h1><h2 id="普通工作周"><a href="#普通工作周" class="headerlink" title="普通工作周"></a>普通工作周</h2><h3 id="工作日（周一～周五）"><a href="#工作日（周一～周五）" class="headerlink" title="工作日（周一～周五）"></a>工作日（周一～周五）</h3><ul>
+<li><p><strong>每日 90 分钟</strong></p>
+<ul>
+<li>30 min：英语听力</li>
+<li>60 min：主线（数学 &#x2F; VLM &#x2F; 工程）</li>
+</ul>
+</li>
+</ul>
+<h3 id="周六（深度）"><a href="#周六（深度）" class="headerlink" title="周六（深度）"></a>周六（深度）</h3><ul>
+<li><p>3–4 小时：</p>
+<ul>
+<li>推导 &#x2F; 代码 &#x2F; 微调实验</li>
+</ul>
+</li>
+</ul>
+<h3 id="周日（轻量）"><a href="#周日（轻量）" class="headerlink" title="周日（轻量）"></a>周日（轻量）</h3><ul>
+<li><p>1–2 小时：</p>
+<ul>
+<li>总结 + 博客素材</li>
+</ul>
+</li>
+<li><p>30 min：</p>
+<ul>
+<li>周复盘（强制）</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="出差周（保命版）"><a href="#出差周（保命版）" class="headerlink" title="出差周（保命版）"></a>出差周（保命版）</h2><ul>
+<li><p>每天只做：</p>
+<ul>
+<li>英语听力 20 min</li>
+</ul>
+</li>
+<li><p>周末：</p>
+<ul>
+<li>1 次 60 min 阅读 &#x2F; 思考</li>
+</ul>
+</li>
+<li><p>不写代码，不做新任务</p>
+</li>
+</ul>
+<hr>
+<h1 id="五、一个非常重要的结论（我必须直说）"><a href="#五、一个非常重要的结论（我必须直说）" class="headerlink" title="五、一个非常重要的结论（我必须直说）"></a>五、一个非常重要的结论（我必须直说）</h1><blockquote>
+<p><strong>你现在不缺目标、不缺努力，缺的是“工程化收敛”</strong></p>
+</blockquote>
+<p>这套计划的核心不是“学更多”，而是：</p>
+<ul>
+<li>把 <strong>VLM + 端侧部署</strong> 变成你<strong>不可替代的能力</strong></li>
+<li>把数学变成 <strong>你能用、能解释、能设计的工具</strong></li>
+<li>把语言当作 <strong>工程放大器</strong></li>
+</ul>
+<hr>
+<p>如果你愿意，下一步我可以：</p>
+<ol>
+<li><strong>把 2026.02–03 拆成“每天该干什么”</strong></li>
+<li>给你一套 <strong>Jetson Orin Nano 专属学习 &#x2F; 实验路线</strong></li>
+<li>给你设计一个 <strong>“出差专用低负担学习系统”</strong></li>
+</ol>
+<p>你直接告诉我：<br>👉 <strong>先从哪一项开始压实？</strong></p>
+<p>下面我<strong>只补充你点名的两块内容</strong>，并且会<strong>严格贴合你的现实目标</strong>：<br>👉 <strong>工程 &#x2F; 多模态 &#x2F; 端侧部署可用</strong>，而不是数学系或应试英语。</p>
+<p>我会把内容拆成 <strong>「学什么 → 为什么 → 怎么学 → 周执行模板」</strong>，你可以直接塞进你现有的年度计划里，不需要整体推翻。</p>
+<hr>
+<h1 id="一、多变量微积分（工程-x2F-ML-定向方案）"><a href="#一、多变量微积分（工程-x2F-ML-定向方案）" class="headerlink" title="一、多变量微积分（工程 &#x2F; ML 定向方案）"></a>一、多变量微积分（工程 &#x2F; ML 定向方案）</h1><blockquote>
+<p>定位一句话：<br><strong>你学多变量微积分不是为了考试，而是为了“理解模型在干什么”</strong></p>
+</blockquote>
+<hr>
+<h2 id="1️⃣-多变量微积分在你当前工作的真实用途"><a href="#1️⃣-多变量微积分在你当前工作的真实用途" class="headerlink" title="1️⃣ 多变量微积分在你当前工作的真实用途"></a>1️⃣ 多变量微积分在你当前工作的真实用途</h2><p>你已经在做 &#x2F; 将要做的事情中，多变量微积分出现的位置：</p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>对应数学</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>多维 loss 优化</td>
+<td>梯度、方向导数</td>
+</tr>
+<tr>
+<td>CNN &#x2F; Transformer</td>
+<td>Jacobian、链式法则</td>
+</tr>
+<tr>
+<td>端侧量化 &#x2F; 剪枝</td>
+<td>局部敏感性</td>
+</tr>
+<tr>
+<td>多模态对齐</td>
+<td>高维空间几何</td>
+</tr>
+<tr>
+<td>LoRA &#x2F; 微调</td>
+<td>子空间投影</td>
+</tr>
+</tbody></table>
+<p>👉 <strong>重点不是算题，而是“几何直觉 + 梯度传播”</strong></p>
+<hr>
+<h2 id="2️⃣-多变量微积分学习范围（明确边界）"><a href="#2️⃣-多变量微积分学习范围（明确边界）" class="headerlink" title="2️⃣ 多变量微积分学习范围（明确边界）"></a>2️⃣ 多变量微积分学习范围（明确边界）</h2><h3 id="必须掌握（90-工程足够）"><a href="#必须掌握（90-工程足够）" class="headerlink" title="必须掌握（90% 工程足够）"></a><strong>必须掌握（90% 工程足够）</strong></h3><h4 id="（一）多变量函数"><a href="#（一）多变量函数" class="headerlink" title="（一）多变量函数"></a>（一）多变量函数</h4><ul>
+<li>f(x, y, z) 的几何意义</li>
+<li>等高线 &#x2F; 等值面</li>
+</ul>
+<h4 id="（二）偏导数-amp-梯度"><a href="#（二）偏导数-amp-梯度" class="headerlink" title="（二）偏导数 &amp; 梯度"></a>（二）偏导数 &amp; 梯度</h4><ul>
+<li>∂f&#x2F;∂x 的真实含义</li>
+<li>梯度向量 &#x3D; 最陡上升方向</li>
+<li>梯度与 loss surface 的关系</li>
+</ul>
+<h4 id="（三）方向导数"><a href="#（三）方向导数" class="headerlink" title="（三）方向导数"></a>（三）方向导数</h4><ul>
+<li>为什么梯度方向最重要</li>
+<li>SGD 在干什么</li>
+</ul>
+<h4 id="（四）链式法则（核心）"><a href="#（四）链式法则（核心）" class="headerlink" title="（四）链式法则（核心）"></a>（四）链式法则（核心）</h4><ul>
+<li>多层网络中的梯度传播</li>
+<li>Jacobian 的“工程直觉版”</li>
+</ul>
+<h4 id="（五）多重积分（只要直觉）"><a href="#（五）多重积分（只要直觉）" class="headerlink" title="（五）多重积分（只要直觉）"></a>（五）多重积分（只要直觉）</h4><ul>
+<li>体积 &#x2F; 概率 &#x2F; 期望</li>
+<li>不需要手算复杂积分</li>
+</ul>
+<hr>
+<h3 id="可选（知道存在即可）"><a href="#可选（知道存在即可）" class="headerlink" title="可选（知道存在即可）"></a><strong>可选（知道存在即可）</strong></h3><ul>
+<li>拉格朗日乘子（约束优化）</li>
+<li>Hessian（只理解“曲率”）</li>
+</ul>
+<hr>
+<h2 id="3️⃣-推荐学习路线（贴合你当前进度）"><a href="#3️⃣-推荐学习路线（贴合你当前进度）" class="headerlink" title="3️⃣ 推荐学习路线（贴合你当前进度）"></a>3️⃣ 推荐学习路线（贴合你当前进度）</h2><p>你已经学完 MIT 18.01（单变量），<strong>直接无缝接入</strong>：</p>
+<h3 id="主线课程（任选其一）"><a href="#主线课程（任选其一）" class="headerlink" title="主线课程（任选其一）"></a>主线课程（任选其一）</h3><ul>
+<li><strong>MIT 18.02 – Multivariable Calculus</strong></li>
+<li>或 <strong>Khan Academy（多变量部分）</strong></li>
+</ul>
+<blockquote>
+<p>选择标准：</p>
+<ul>
+<li>MIT：推导严谨</li>
+<li>KA：直觉更强<br>👉 你建议 <strong>MIT 主线 + KA 补直觉</strong></li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="4️⃣-工程化学习方法（非常重要）"><a href="#4️⃣-工程化学习方法（非常重要）" class="headerlink" title="4️⃣ 工程化学习方法（非常重要）"></a>4️⃣ 工程化学习方法（非常重要）</h2><h3 id="❌-错误方式"><a href="#❌-错误方式" class="headerlink" title="❌ 错误方式"></a>❌ 错误方式</h3><ul>
+<li>做大量符号运算</li>
+<li>追求完整证明</li>
+</ul>
+<h3 id="✅-正确方式（你该用的）"><a href="#✅-正确方式（你该用的）" class="headerlink" title="✅ 正确方式（你该用的）"></a>✅ 正确方式（你该用的）</h3><p>每一节课只回答 3 个问题：</p>
+<ol>
+<li><strong>几何上这是什么？</strong></li>
+<li><strong>在神经网络里它对应什么？</strong></li>
+<li><strong>如果没有它，会发生什么问题？</strong></li>
+</ol>
+<hr>
+<h2 id="5️⃣-多变量微积分-8-周执行表（可插入-3–4-月）"><a href="#5️⃣-多变量微积分-8-周执行表（可插入-3–4-月）" class="headerlink" title="5️⃣ 多变量微积分 8 周执行表（可插入 3–4 月）"></a>5️⃣ 多变量微积分 8 周执行表（可插入 3–4 月）</h2><table>
+<thead>
+<tr>
+<th>周</th>
+<th>内容</th>
+<th>工程对照</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>W1</td>
+<td>多变量函数、等高线</td>
+<td>loss surface</td>
+</tr>
+<tr>
+<td>W2</td>
+<td>偏导数</td>
+<td>参数敏感度</td>
+</tr>
+<tr>
+<td>W3</td>
+<td>梯度、方向导数</td>
+<td>SGD</td>
+</tr>
+<tr>
+<td>W4</td>
+<td>链式法则</td>
+<td>Backprop</td>
+</tr>
+<tr>
+<td>W5</td>
+<td>Jacobian</td>
+<td>多层网络</td>
+</tr>
+<tr>
+<td>W6</td>
+<td>多重积分直觉</td>
+<td>概率期望</td>
+</tr>
+<tr>
+<td>W7</td>
+<td>拉格朗日乘子</td>
+<td>正则化</td>
+</tr>
+<tr>
+<td>W8</td>
+<td>总结</td>
+<td>工程复盘</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="6️⃣-每周学习模板（多变量）"><a href="#6️⃣-每周学习模板（多变量）" class="headerlink" title="6️⃣ 每周学习模板（多变量）"></a>6️⃣ 每周学习模板（多变量）</h2><ul>
+<li><p>工作日：</p>
+<ul>
+<li>30–40 min 看课</li>
+<li>10 min 画图 &#x2F; 写直觉</li>
+</ul>
+</li>
+<li><p>周末：</p>
+<ul>
+<li>1 次“工程映射总结”</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="二、英语听力：工程型、非应试路径"><a href="#二、英语听力：工程型、非应试路径" class="headerlink" title="二、英语听力：工程型、非应试路径"></a>二、英语听力：<strong>工程型、非应试路径</strong></h1><blockquote>
+<p>你现在的真实状态是：<br><strong>看得懂 &gt; 听不稳 &gt; 说不出</strong></p>
+</blockquote>
+<p>所以策略是：<br>👉 <strong>听力 → 可复述 → 再谈考试</strong></p>
+<hr>
+<h2 id="1️⃣-英语听力能力拆解"><a href="#1️⃣-英语听力能力拆解" class="headerlink" title="1️⃣ 英语听力能力拆解"></a>1️⃣ 英语听力能力拆解</h2><table>
+<thead>
+<tr>
+<th>能力</th>
+<th>你的状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>词汇量</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>技术阅读</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>连读 &#x2F; 弱读</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>长句跟读</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>技术语音适应</td>
+<td>❌</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="2️⃣-听力训练三层结构（必须一起做）"><a href="#2️⃣-听力训练三层结构（必须一起做）" class="headerlink" title="2️⃣ 听力训练三层结构（必须一起做）"></a>2️⃣ 听力训练三层结构（必须一起做）</h2><h3 id="🔹-第一层：输入（听得清）"><a href="#🔹-第一层：输入（听得清）" class="headerlink" title="🔹 第一层：输入（听得清）"></a>🔹 第一层：输入（听得清）</h3><ul>
+<li><strong>目标</strong>：听懂声音本身</li>
+</ul>
+<p>推荐：</p>
+<ul>
+<li>YouTube 技术演讲</li>
+<li>Podcast（偏工程）</li>
+</ul>
+<p>方法：</p>
+<ul>
+<li>开字幕 → 关字幕</li>
+<li>不暂停</li>
+</ul>
+<hr>
+<h3 id="🔹-第二层：拆解（听得准）"><a href="#🔹-第二层：拆解（听得准）" class="headerlink" title="🔹 第二层：拆解（听得准）"></a>🔹 第二层：拆解（听得准）</h3><ul>
+<li><strong>目标</strong>：听清弱读 &#x2F; 连读</li>
+</ul>
+<p>方法：</p>
+<ul>
+<li>精听 2–3 分钟</li>
+<li>对照字幕</li>
+<li>标出听错的地方</li>
+</ul>
+<hr>
+<h3 id="🔹-第三层：输出（听得住）"><a href="#🔹-第三层：输出（听得住）" class="headerlink" title="🔹 第三层：输出（听得住）"></a>🔹 第三层：输出（听得住）</h3><ul>
+<li><strong>目标</strong>：能复述</li>
+</ul>
+<p>方法：</p>
+<ul>
+<li>Shadowing</li>
+<li>技术复述（用你自己的话）</li>
+</ul>
+<hr>
+<h2 id="3️⃣-具体资源推荐（工程向）"><a href="#3️⃣-具体资源推荐（工程向）" class="headerlink" title="3️⃣ 具体资源推荐（工程向）"></a>3️⃣ 具体资源推荐（工程向）</h2><h3 id="技术听力（主线）"><a href="#技术听力（主线）" class="headerlink" title="技术听力（主线）"></a>技术听力（主线）</h3><ul>
+<li><strong>Lex Fridman Podcast</strong></li>
+<li><strong>Google &#x2F; OpenAI &#x2F; Meta Tech Talks</strong></li>
+<li><strong>PyTorch &#x2F; NVIDIA GTC</strong></li>
+</ul>
+<h3 id="日常语音（补充）"><a href="#日常语音（补充）" class="headerlink" title="日常语音（补充）"></a>日常语音（补充）</h3><ul>
+<li><strong>6 Minute English（BBC）</strong></li>
+</ul>
+<hr>
+<h2 id="4️⃣-每日-30–45-分钟听力方案（可长期）"><a href="#4️⃣-每日-30–45-分钟听力方案（可长期）" class="headerlink" title="4️⃣ 每日 30–45 分钟听力方案（可长期）"></a>4️⃣ 每日 30–45 分钟听力方案（可长期）</h2><h3 id="工作日模板"><a href="#工作日模板" class="headerlink" title="工作日模板"></a>工作日模板</h3><ol>
+<li><p><strong>泛听（15 min）</strong></p>
+<ul>
+<li>技术视频 &#x2F; Podcast</li>
+<li>不停，不暂停</li>
+</ul>
+</li>
+<li><p><strong>精听（10 min）</strong></p>
+<ul>
+<li>同一段反复听</li>
+<li>对字幕找差距</li>
+</ul>
+</li>
+<li><p><strong>Shadowing（5–10 min）</strong></p>
+<ul>
+<li>跟读</li>
+<li>不求流利，只求跟上</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="5️⃣-出差专用低负担版本"><a href="#5️⃣-出差专用低负担版本" class="headerlink" title="5️⃣ 出差专用低负担版本"></a>5️⃣ 出差专用低负担版本</h2><ul>
+<li><p>只做：</p>
+<ul>
+<li>泛听 20 min</li>
+</ul>
+</li>
+<li><p>场景：</p>
+<ul>
+<li>路上 &#x2F; 酒店</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="6️⃣-3-阶段里程碑（现实可达）"><a href="#6️⃣-3-阶段里程碑（现实可达）" class="headerlink" title="6️⃣ 3 阶段里程碑（现实可达）"></a>6️⃣ 3 阶段里程碑（现实可达）</h2><table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>时间</th>
+<th>能力表现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Phase 1</td>
+<td>1–2 月</td>
+<td>听懂 50% 技术内容</td>
+</tr>
+<tr>
+<td>Phase 2</td>
+<td>3–6 月</td>
+<td>能复述技术要点</td>
+</tr>
+<tr>
+<td>Phase 3</td>
+<td>6–12 月</td>
+<td>为雅思听力打基础</td>
+</tr>
+</tbody></table>
+<hr>
+<h1 id="三、你现在该立刻做的两件事（行动指令）"><a href="#三、你现在该立刻做的两件事（行动指令）" class="headerlink" title="三、你现在该立刻做的两件事（行动指令）"></a>三、你现在该立刻做的两件事（行动指令）</h1><ol>
+<li><p><strong>多变量微积分</strong></p>
+<ul>
+<li>选定：MIT 18.02</li>
+<li>本周只看 <strong>第一讲 + 画等高线</strong></li>
+</ul>
+</li>
+<li><p><strong>英语听力</strong></p>
+<ul>
+<li>订阅 1 个技术 Podcast</li>
+<li>每天只做 <strong>泛听 20 min</strong></li>
+</ul>
+</li>
+</ol>
+<hr>
+<p>如果你愿意，下一步我可以：</p>
+<ul>
+<li>给你 <strong>MIT 18.02 每一讲的“工程对应表”</strong></li>
+<li>给你一份 <strong>3 个月英语听力具体清单（到视频级）</strong></li>
+<li>或直接 <strong>把这两块塞进你之前的全年计划表</strong></li>
+</ul>
+<p>你选一个，我继续给你“压实”。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E7%94%9F%E6%B4%BB-%E8%AE%A1%E5%88%92/" class="category-chain-item">生活-计划</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%89%A7%E8%A1%8C%E6%96%B9%E6%A1%88/">#执行方案</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>2026执行方案</div>
+      <div>https://southcold.top/2026/02/09/2026执行方案/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Southcold</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年2月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                    <i class="iconfont icon-nc"></i>
+                  </span>
+                </a>
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+    <div id="giscus" class="giscus"></div>
+    <script type="text/javascript">
+      Fluid.utils.loadComments('#giscus', function() {
+        var options = {"repo":"Windsoldier76/Windsoldier76.github.io","repo-id":"MDEwOlJlcG9zaXRvcnkxMTc3Njk4OTg=","category":"Announcements","category-id":"DIC_kwDOBwUGqs4CTP-3","theme-light":"light","theme-dark":"dark","mapping":"pathname","reactions-enabled":1,"emit-metadata":0,"input-position":"top","lang":"zh-CN"};
+        var attributes = {};
+        for (let option in options) {
+          if (!option.startsWith('theme-')) {
+            var key = option.startsWith('data-') ? option : 'data-' + option;
+            attributes[key] = options[option];
+          }
+        }
+        var light = 'light';
+        var dark = 'dark';
+        window.GiscusThemeLight = light;
+        window.GiscusThemeDark = dark;
+        attributes['data-theme'] = document.documentElement.getAttribute('data-user-color-scheme') === 'dark' ? dark : light;
+        for (let attribute in attributes) {
+          var value = attributes[attribute];
+          if (value === undefined || value === null || value === '') {
+            delete attributes[attribute];
+          }
+        }
+        var s = document.createElement('script');
+        s.setAttribute('src', 'https://giscus.app/client.js');
+        s.setAttribute('crossorigin', 'anonymous');
+        for (let attribute in attributes) {
+          s.setAttribute(attribute, attributes[attribute]);
+        }
+        var ss = document.getElementsByTagName('script');
+        var e = ss.length > 0 ? ss[ss.length - 1] : document.head || document.documentElement;
+        e.parentNode.insertBefore(s, e.nextSibling);
+      });
+    </script>
+    <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
