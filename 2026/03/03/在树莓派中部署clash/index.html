@@ -1,0 +1,821 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Southcold">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="在树莓派5&#x2F;4G版本上部署clash 参考链接1，树莓派4B_linux clash部署教程（2024.3.4） 参考链接2，在 Raspberry Pi 上运行 Clash 作为透明代理 参考链接3，树莓派（无桌面）运行 clash 代理服务  确认系统架构1uname -m  返回的型号应当是aarch64, 因此选择mihomo-arm64版本进行下载 如果不希望使用TUN模式的话">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在树莓派中部署clash">
+<meta property="og:url" content="https://southcold.top/2026/03/03/%E5%9C%A8%E6%A0%91%E8%8E%93%E6%B4%BE%E4%B8%AD%E9%83%A8%E7%BD%B2clash/index.html">
+<meta property="og:site_name" content="SouthCold">
+<meta property="og:description" content="在树莓派5&#x2F;4G版本上部署clash 参考链接1，树莓派4B_linux clash部署教程（2024.3.4） 参考链接2，在 Raspberry Pi 上运行 Clash 作为透明代理 参考链接3，树莓派（无桌面）运行 clash 代理服务  确认系统架构1uname -m  返回的型号应当是aarch64, 因此选择mihomo-arm64版本进行下载 如果不希望使用TUN模式的话">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-03-03T10:39:41.000Z">
+<meta property="article:modified_time" content="2026-03-03T10:47:04.498Z">
+<meta property="article:author" content="Southcold">
+<meta property="article:tag" content="clash">
+<meta property="article:tag" content="树莓派">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>在树莓派中部署clash - SouthCold</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"southcold.top","root":"/","version":"1.9.4","typing":{"enable":false,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-DBD9GGLNXT","gtag":"G-DBD9GGLNXT","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-DBD9GGLNXT', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+    <!-- Google gtag.js -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.googletagmanager.com/gtag/js?id=G-DBD9GGLNXT', function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-DBD9GGLNXT');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>SouthCold</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle">在树莓派中部署clash</span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        Southcold
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-03-03 18:39" pubdate>
+          2026年3月3日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          30 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">在树莓派中部署clash</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：2026年3月3日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="在树莓派5-4G版本上部署clash"><a href="#在树莓派5-4G版本上部署clash" class="headerlink" title="在树莓派5&#x2F;4G版本上部署clash"></a>在树莓派5&#x2F;4G版本上部署clash</h1><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/Xizhe-Hao/Clash-for-RaspberryPi-4B">参考链接1，树莓派4B_linux clash部署教程（2024.3.4）</a></p>
+<p><a target="_blank" rel="noopener" href="https://cherysunzhang.com/2020/05/deploy-clash-as-transparent-proxy-on-raspberry-pi/">参考链接2，在 Raspberry Pi 上运行 Clash 作为透明代理</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv44730464/?opus_fallback=1">参考链接3，树莓派（无桌面）运行 clash 代理服务</a></p>
+</blockquote>
+<h2 id="确认系统架构"><a href="#确认系统架构" class="headerlink" title="确认系统架构"></a>确认系统架构</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">uname</span> -m<br></code></pre></td></tr></table></figure>
+
+<p>返回的型号应当是<code>aarch64</code>, 因此选择<code>mihomo-arm64</code>版本进行下载</p>
+<p>如果不希望使用TUN模式的话也可以下载使用老的<a target="_blank" rel="noopener" href="https://github.com/frainzy1477/clash_dev/releases/download/v1.1.0/clash-linux-armv8.gz"><code>clash-armv8</code></a>内核</p>
+<h2 id="下载mihomo内核-即clash-meta内核"><a href="#下载mihomo内核-即clash-meta内核" class="headerlink" title="下载mihomo内核(即clash-meta内核)"></a>下载mihomo内核(即clash-meta内核)</h2><p>选择此内核的原因是希望能开启TUN模式</p>
+<p>通过<a target="_blank" rel="noopener" href="https://github.com/MetaCubeX/mihomo/releases">官方github release页面</a>下载 <a target="_blank" rel="noopener" href="https://github.com/MetaCubeX/mihomo/releases/download/v1.19.20/mihomo-linux-arm64-v1.19.20.gz"><code>mihomo-linux-arm64-v1.19.20.gz</code></a>,注意是<code>arm64</code>的<code>gz</code>包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">gunzip mihomo-linux-arm64-v1.19.20.gz<br><br>sudo <span class="hljs-built_in">mv</span> mihomo-linux-arm64-v1.19.20 /usr/local/bin/clash<br>sudo <span class="hljs-built_in">chmod</span> +x /usr/local/bin/clash<br></code></pre></td></tr></table></figure>
+
+<h2 id="下载Country-mmdb"><a href="#下载Country-mmdb" class="headerlink" title="下载Country.mmdb"></a>下载Country.mmdb</h2><p>Country.mmdb 地理位置数据库文件，可以从<a target="_blank" rel="noopener" href="https://github.com/Dreamacro/maxmind-geoip/releases">官方github release页面</a> 下载 </p>
+<h2 id="下载config-yaml"><a href="#下载config-yaml" class="headerlink" title="下载config.yaml"></a>下载config.yaml</h2><p>自行寻找，注意名字需要调整为config.yaml，因为这是默认加载的配置文件，如果是别的名字的话请参考后面的<a href="#%E6%B3%A8%E5%86%8C%E4%B8%BA%E5%90%8E%E5%8F%B0%E6%9C%8D%E5%8A%A1"><strong>注册为后台服务</strong></a>章节</p>
+<h2 id="将配置文件放入文件夹"><a href="#将配置文件放入文件夹" class="headerlink" title="将配置文件放入文件夹"></a>将配置文件放入文件夹</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo <span class="hljs-built_in">mkdir</span> -p ~/.config/clash/<br>sudo <span class="hljs-built_in">mv</span> config.yaml ~/.config/clash/<br>sudo <span class="hljs-built_in">mv</span> Country.mmdb ~/.config/clash/<br></code></pre></td></tr></table></figure>
+
+<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><h3 id="确认版本号"><a href="#确认版本号" class="headerlink" title="确认版本号"></a>确认版本号</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">/usr/local/bin/clash -v<br></code></pre></td></tr></table></figure>
+
+<p>输出应当类似<code>Clash Meta v1.xx.x</code></p>
+<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">clash -d ~/.config/clash<br></code></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：<code>ctrl+c</code>不能关闭clash,需要额外输入关闭命令以正确停止clash运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">pkill clash<br><span class="hljs-built_in">sleep</span> 1<br></code></pre></td></tr></table></figure>
+
+<h2 id="注册为后台服务"><a href="#注册为后台服务" class="headerlink" title="注册为后台服务"></a>注册为后台服务</h2><p>可以实现自动重启、开机自启</p>
+<h3 id="创建服务"><a href="#创建服务" class="headerlink" title="创建服务"></a>创建服务</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo vim /etc/systemd/system/clash.service<br></code></pre></td></tr></table></figure>
+
+
+<h3 id="编写服务文件"><a href="#编写服务文件" class="headerlink" title="编写服务文件"></a>编写服务文件</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs service">[Unit]<br>Description=Clash Proxy Service<br>After=network-online.target<br>Wants=network-online.target<br><br>[Service]<br>Type=simple<br>User=myusername<br>Group=myusername<br><br>ExecStart=/usr/local/bin/clash -d /home/myusername/.config/clash -f /home/myusername/.config/clash/config.yaml<br>Restart=on-failure<br>RestartSec=5s<br><br># ===== TUN 必须的权限 =====<br>AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE<br>CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE<br>NoNewPrivileges=true<br><br>LimitNOFILE=1048576<br><br>[Install]<br>WantedBy=multi-user.target<br></code></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：需要根据你的用户名替换<code>myusername</code>，clash的config.yaml可以根据你的配置文件名进行修改</p>
+<h3 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo systemctl daemon-reload<br>sudo systemctl <span class="hljs-built_in">enable</span> clash<br>sudo systemctl start clash<br></code></pre></td></tr></table></figure>
+
+<h2 id="增加TUN模式"><a href="#增加TUN模式" class="headerlink" title="增加TUN模式"></a>增加TUN模式</h2><p>在<code>config.yaml</code>中增加一下内容</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># ===== TUN 模式 =====</span><br><span class="hljs-attr">tun:</span><br>  <span class="hljs-attr">enable:</span> <span class="hljs-literal">true</span><br>  <span class="hljs-attr">stack:</span> <span class="hljs-string">system</span> <span class="hljs-comment"># 树莓派 5 + 新内核，推荐 system</span><br>  <span class="hljs-attr">dns-hijack:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">any:53</span><br>  <span class="hljs-attr">auto-route:</span> <span class="hljs-literal">true</span><br>  <span class="hljs-attr">auto-detect-interface:</span> <span class="hljs-literal">true</span><br><br><span class="hljs-comment"># ===== DNS（非常重要）=====</span><br><span class="hljs-attr">dns:</span><br>  <span class="hljs-attr">enable:</span> <span class="hljs-literal">true</span><br>  <span class="hljs-attr">listen:</span> <span class="hljs-number">0.0</span><span class="hljs-number">.0</span><span class="hljs-number">.0</span><span class="hljs-string">:1053</span><br>  <span class="hljs-attr">enhanced-mode:</span> <span class="hljs-string">fake-ip</span><br>  <span class="hljs-attr">fake-ip-range:</span> <span class="hljs-number">198.18</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span><span class="hljs-string">/16</span><br>  <span class="hljs-attr">use-hosts:</span> <span class="hljs-literal">true</span><br><br>  <span class="hljs-attr">nameserver:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-number">223.5</span><span class="hljs-number">.5</span><span class="hljs-number">.5</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-number">119.29</span><span class="hljs-number">.29</span><span class="hljs-number">.29</span><br><br>  <span class="hljs-attr">fallback:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-number">8.8</span><span class="hljs-number">.8</span><span class="hljs-number">.8</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-number">1.1</span><span class="hljs-number">.1</span><span class="hljs-number">.1</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">tls://[2606:4700:4700::1111]:853</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">tls://[2001:4860:4860::8888]:853</span><br><br>  <span class="hljs-attr">fallback-filter:</span><br>    <span class="hljs-attr">geoip:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-attr">geoip-code:</span> <span class="hljs-string">CN</span><br>    <span class="hljs-attr">ipcidr:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-number">240.0</span><span class="hljs-number">.0</span><span class="hljs-number">.0</span><span class="hljs-string">/4</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">ip a | grep 198.18 <br><span class="hljs-comment"># 运行clash时返回以下结果为正常，常规检测ip a | grep tun是看不到的</span><br>inet 198.18.0.1/30 brd 198.18.0.3 scope global Meta<br></code></pre></td></tr></table></figure>
+
+<h2 id="常用的config-yaml配置"><a href="#常用的config-yaml配置" class="headerlink" title="常用的config.yaml配置"></a>常用的config.yaml配置</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">ipv6:</span> <span class="hljs-literal">true</span><br><span class="hljs-attr">allow-lan:</span> <span class="hljs-literal">true</span><br><span class="hljs-attr">external-controller:</span> <span class="hljs-number">0.0</span><span class="hljs-number">.0</span><span class="hljs-number">.0</span><span class="hljs-string">:9090</span><br><span class="hljs-attr">secret:</span> <span class="hljs-string">自行填写密钥，注意双引号也会被作为密钥使用</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="定期更新订阅"><a href="#定期更新订阅" class="headerlink" title="定期更新订阅"></a>定期更新订阅</h2><p><code>config.yaml</code> 里加入如下内容</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># 顶级字段</span><br><span class="hljs-attr">profile:</span><br>  <span class="hljs-attr">store-selected:</span> <span class="hljs-literal">true</span>        <span class="hljs-comment"># 记住你在 UI 里选的节点</span><br>  <span class="hljs-attr">store-fake-ip:</span> <span class="hljs-literal">true</span>         <span class="hljs-comment"># 保留 fake-ip，重启不抖</span><br>  <span class="hljs-attr">interval:</span> <span class="hljs-number">86400</span>             <span class="hljs-comment"># 自动更新间隔（秒），1 天，每小时更新的话改为3600</span><br><br><span class="hljs-comment"># 顶级字段</span><br><span class="hljs-attr">proxy-providers:</span><br>  <span class="hljs-attr">airport:</span><br>    <span class="hljs-attr">type:</span> <span class="hljs-string">http</span><br>    <span class="hljs-attr">url:</span> <span class="hljs-string">https://你的订阅地址</span><br>    <span class="hljs-attr">interval:</span> <span class="hljs-number">86400</span>          <span class="hljs-comment"># 每小时更新的话改为3600</span><br>    <span class="hljs-attr">path:</span> <span class="hljs-string">./providers/airport.yaml</span><br>    <span class="hljs-attr">health-check:</span><br>      <span class="hljs-attr">enable:</span> <span class="hljs-literal">true</span><br>      <span class="hljs-attr">url:</span> <span class="hljs-string">http://www.gstatic.com/generate_204</span><br>      <span class="hljs-attr">interval:</span> <span class="hljs-number">300</span><br><br><span class="hljs-comment"># 在proxy-groups里增加use字段，指定airport，此处为示例</span><br><span class="hljs-attr">proxy-groups:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">🔰</span> <span class="hljs-string">选择节点</span><br>    <span class="hljs-attr">type:</span> <span class="hljs-string">select</span><br>    <span class="hljs-attr">use:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">airport</span><br><br></code></pre></td></tr></table></figure>
+
+<h2 id="部署基于本地的web-ui"><a href="#部署基于本地的web-ui" class="headerlink" title="部署基于本地的web ui"></a>部署基于本地的web ui</h2><h3 id="yacd，简单稳定的web-ui"><a href="#yacd，简单稳定的web-ui" class="headerlink" title="yacd，简单稳定的web ui"></a>yacd，简单稳定的web ui</h3><h4 id="下载yacd文件"><a href="#下载yacd文件" class="headerlink" title="下载yacd文件"></a>下载yacd文件</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> ~/.config/clash<br><span class="hljs-built_in">mkdir</span> -p yacd<br><span class="hljs-built_in">cd</span> yacd<br><br><span class="hljs-comment"># 下载官方编译好的单文件版本</span><br>wget https://github.com/haishanh/yacd/releases/latest/download/yacd.tar.xz<br>tar -xf yacd.tar.xz<br><br><span class="hljs-built_in">ls</span><br><span class="hljs-comment"># index.html  assets/  ...</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="配置yacd界面"><a href="#配置yacd界面" class="headerlink" title="配置yacd界面"></a>配置yacd界面</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">vim ~/.config/clash/config.yaml<br></code></pre></td></tr></table></figure>
+
+<p>打开<code>config.yaml</code>并增加以下内容</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">external-ui:</span> <span class="hljs-string">yacd</span><br></code></pre></td></tr></table></figure>
+
+<p>重启clash，查看页面<code>树莓派ip地址:9090</code></p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">sudo systemctl restart clash<br></code></pre></td></tr></table></figure>
+
+<h3 id="metacudexd，功能更多的web-ui"><a href="#metacudexd，功能更多的web-ui" class="headerlink" title="metacudexd，功能更多的web ui"></a>metacudexd，功能更多的web ui</h3><h4 id="创建目录（严格对齐）"><a href="#创建目录（严格对齐）" class="headerlink" title="创建目录（严格对齐）"></a>创建目录（严格对齐）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">mkdir</span> -p ~/.config/clash/meta-dashboard<br><span class="hljs-built_in">cd</span> ~/.config/clash/meta-dashboard<br></code></pre></td></tr></table></figure>
+
+<h4 id="下载官方构建好的-UI（不是源码）"><a href="#下载官方构建好的-UI（不是源码）" class="headerlink" title="下载官方构建好的 UI（不是源码）"></a>下载官方构建好的 UI（不是源码）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">wget https://github.com/MetaCubeX/metacubexd/releases/latest/download/metacubexd.tar.gz<br>tar -xzf metacubexd.tar.gz<br></code></pre></td></tr></table></figure>
+
+<p>解压后你应该看到：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">index.html<br>assets/<br></code></pre></td></tr></table></figure>
+
+<p>确认路径最终是：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">~/.config/clash/meta-dashboard/index.html<br></code></pre></td></tr></table></figure>
+
+<h4 id="配置metacubexd页面"><a href="#配置metacubexd页面" class="headerlink" title="配置metacubexd页面"></a>配置metacubexd页面</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">vim ~/.config/clash/config.yaml<br></code></pre></td></tr></table></figure>
+
+<p>打开<code>config.yaml</code>并增加以下内容</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">external-ui:</span> <span class="hljs-string">meta-dashboard</span><br></code></pre></td></tr></table></figure>
+
+<p>重启clash，查看页面<code>树莓派ip地址:9090</code></p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">sudo systemctl restart clash<br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%8A%80%E6%9C%AF-%E8%AE%B0%E5%BD%95/" class="category-chain-item">技术-记录</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%A0%91%E8%8E%93%E6%B4%BE/">#树莓派</a>
+      
+        <a href="/tags/clash/">#clash</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>在树莓派中部署clash</div>
+      <div>https://southcold.top/2026/03/03/在树莓派中部署clash/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Southcold</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年3月3日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                    <i class="iconfont icon-nc"></i>
+                  </span>
+                </a>
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/03/03/hello-world/" title="Hello World">
+                        <span class="hidden-mobile">Hello World</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+    <div id="giscus" class="giscus"></div>
+    <script type="text/javascript">
+      Fluid.utils.loadComments('#giscus', function() {
+        var options = {"repo":"Windsoldier76/Windsoldier76.github.io","repo-id":"MDEwOlJlcG9zaXRvcnkxMTc3Njk4OTg=","category":"Announcements","category-id":"DIC_kwDOBwUGqs4CTP-3","theme-light":"light","theme-dark":"dark","mapping":"pathname","reactions-enabled":1,"emit-metadata":0,"input-position":"top","lang":"zh-CN"};
+        var attributes = {};
+        for (let option in options) {
+          if (!option.startsWith('theme-')) {
+            var key = option.startsWith('data-') ? option : 'data-' + option;
+            attributes[key] = options[option];
+          }
+        }
+        var light = 'light';
+        var dark = 'dark';
+        window.GiscusThemeLight = light;
+        window.GiscusThemeDark = dark;
+        attributes['data-theme'] = document.documentElement.getAttribute('data-user-color-scheme') === 'dark' ? dark : light;
+        for (let attribute in attributes) {
+          var value = attributes[attribute];
+          if (value === undefined || value === null || value === '') {
+            delete attributes[attribute];
+          }
+        }
+        var s = document.createElement('script');
+        s.setAttribute('src', 'https://giscus.app/client.js');
+        s.setAttribute('crossorigin', 'anonymous');
+        for (let attribute in attributes) {
+          s.setAttribute(attribute, attributes[attribute]);
+        }
+        var ss = document.getElementsByTagName('script');
+        var e = ss.length > 0 ? ss[ss.length - 1] : document.head || document.documentElement;
+        e.parentNode.insertBefore(s, e.nextSibling);
+      });
+    </script>
+    <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
