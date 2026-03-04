@@ -9,6 +9,22 @@ category: 技术-记录
 comment: true
 ---
 
+
+# 计划学习路线
+
+我计划使用项目驱动的方式学习c++，以下是gpt给出学习路线建议
+
+## 总体学习路线（项目驱动）
+
+```
+项目1  C++基础 + OpenCV
+项目2  C++多线程视觉系统
+项目3  C++深度学习推理（ONNX / TensorRT）
+项目4  Qt工业界面
+项目5  工业视觉完整架构
+项目6  Jetson端部署
+```
+
 # 20260303 学习配置vscode的c/c++运行环境
 
 安装参考:
@@ -58,4 +74,5 @@ gdb --version
 最好安装**code runner**插件，可以省去很多麻烦
 
 中间遇到报错，无法通过vscode正确使用编译，报错内容为gcc无法定位程序输入点clock_gettime64于动态链接库文件，实际原因出现在环境变量中，参考 `https://blog.csdn.net/aaalifu/article/details/114436662` 和 `https://blog.csdn.net/weixin_43935899/article/details/131344343` 两个文章，查看环境变量发现`conda/mingw-w64`在前面，怀疑问题出在这里，将`msys2/ucrt64/bin`上移到上面之后确定保存并重启vscode，运行成功
+
 
